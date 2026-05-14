@@ -18,6 +18,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 - `GET /dashboard`: アプリ首页用のリスク一覧、集計、時間推移を返します。
 - `POST /analyze/{event_id}`: LLMまたはルール型 fallback で詳細助言を返します。
+  - `refresh=true` を付けると保存済み分析を使わず再生成します。
 - `POST /official/sync`: 模擬値から公式API相当の信号をDBへ保存します。
 - `GET /official/sources`: 実APIへ差し替える対象の公式情報カタログを返します。
 - `GET /official/live/weather`: 気象庁防災情報XMLのAtomフィードから愛知県関連の見出しを取得します。
@@ -25,6 +26,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 - `GET /official/live`: DBに保存済みの公式ライブ情報を返します。
 - `GET /system/overview`: 卒業制作の説明に使えるデータフローと設定概要を返します。
 - `GET /health`: DBとAI接続状態を確認します。
+- `DELETE /analysis/cache`: 保存済みAI分析を削除します。`event_id` 指定も可能です。
 
 ## GPT等のオンラインAPIへ切り替える場合
 
@@ -38,6 +40,16 @@ export OPENAI_MODEL=gpt-4.1-mini
 
 データベース、リスクスコア、アプリ画面はそのまま使えます。差し替える中心は `main.py` の `call_openai` と環境変数です。
 
+## 公式情報ソース
+
+気象情報は、気象庁防災情報XMLのAtomフィードを利用する入口を実装しています。
+
+- PULL型公開ページ: `https://xml.kishou.go.jp/xmlpull.html`
+- デフォルトfeed: `https://www.data.jma.go.jp/developer/xml/feed/extra_l.xml`
+- 愛知県コード: `230000`
+
+現在は電文タイトルと本文テキストを軽量に正規化し、`official_area_observations` に保存します。本文XMLの詳細構造をさらに解析すれば、市区町村別・警報種別別の精度を上げられます。
+
 ## 簡易確認
 
 ```bash
@@ -46,3 +58,12 @@ python api_contract_test.py
 ```
 
 Ollama が起動していない場合でも、詳細分析は `rule-based-fallback` により参考提案を返します。
+
+## 現在のリスク表示ロジック
+
+- `risk_score`: SNS投稿数、気象リスク、交通・鉄道リスクをカテゴリ別重みで統合します。
+- `risk_factors`: スコア内訳を `sns / weather / transport` で返します。
+- `confidence_score`: SNS投稿数と公式信号の有無から情報の確からしさを返します。
+- `action_plan`: LLMに依存しない短い推奨行動を返します。
+- `risk_timeline`: 過去時間帯ごとのリスク集中を返します。
+- `ai_analyses`: 詳細分析を保存し、同一モデルでは再生成を避けます。

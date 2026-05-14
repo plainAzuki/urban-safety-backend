@@ -43,6 +43,21 @@ ACTION_GUIDES = {
     "railway": ["鉄道会社の運行情報を確認する", "振替輸送やバス路線を検討する", "駅構内の混雑に注意する"],
 }
 
+ACTION_REASONS = {
+    "煙の方向を避けて移動する": "煙の吸引を避けるため",
+    "消防・自治体の発表を確認する": "現場規制と避難情報を確認するため",
+    "現場周辺への接近を控える": "消火活動と避難経路を妨げないため",
+    "低い道路や河川沿いを避ける": "短時間で冠水・増水する可能性があるため",
+    "避難情報と気象庁の警報を確認する": "公式発表で避難判断を補強するため",
+    "徒歩・車での冠水地点通過を避ける": "水深が浅く見えても移動不能になる恐れがあるため",
+    "現場付近の道路を迂回する": "二次事故と渋滞を避けるため",
+    "救急・警察活動の妨げになる接近を避ける": "緊急車両の動線を確保するため",
+    "公共交通や別ルートを確認する": "移動計画を早めに切り替えるため",
+    "鉄道会社の運行情報を確認する": "運転再開や振替輸送の判断に必要なため",
+    "振替輸送やバス路線を検討する": "駅周辺の滞留を避けるため",
+    "駅構内の混雑に注意する": "転倒や入場規制に巻き込まれないため",
+}
+
 app = FastAPI(title="Urban Safety AI Agent", version="2.0.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
@@ -76,6 +91,20 @@ CREATE TABLE IF NOT EXISTS official_area_observations (
 CREATE INDEX IF NOT EXISTS idx_area_observed_at ON official_area_observations(observed_at);
 """
 
+CREATE_AI_ANALYSIS_TABLE = """
+CREATE TABLE IF NOT EXISTS ai_analyses (
+    id          TEXT PRIMARY KEY,
+    event_id    TEXT NOT NULL,
+    provider    TEXT NOT NULL,
+    model       TEXT NOT NULL,
+    risk_score  REAL NOT NULL,
+    analysis    TEXT NOT NULL,
+    ai_error    TEXT,
+    created_at  TEXT DEFAULT (datetime('now', 'localtime'))
+);
+CREATE INDEX IF NOT EXISTS idx_ai_analyses_event_id ON ai_analyses(event_id);
+"""
+
 
 def get_db():
     if not DB_FILE.exists():
@@ -87,7 +116,7 @@ def get_db():
 
 
 def ensure_official_table(conn):
-    conn.executescript(CREATE_OFFICIAL_TABLE + CREATE_AREA_OFFICIAL_TABLE)
+    conn.executescript(CREATE_OFFICIAL_TABLE + CREATE_AREA_OFFICIAL_TABLE + CREATE_AI_ANALYSIS_TABLE)
     conn.commit()
 
 
@@ -180,6 +209,26 @@ def build_fallback_analysis(event: dict, risk_score: float, official_signals: li
 これは模擬データに基づく参考情報のため、実際の判断では自治体・気象庁・交通機関の公式情報を確認してください。"""
 
 
+def build_action_plan(event: dict, risk_score: float, official_signals: list[dict]) -> list[dict]:
+    """LLMに依存しない、アプリ表示用の短い安全行動リストを作る。"""
+    actions = ACTION_GUIDES.get(event["category"], ["周辺状況を確認する", "公式機関の情報を確認する", "無理な移動を避ける"])
+    official_level = official_summary(official_signals)["status"]
+    plan = []
+    for index, action in enumerate(actions):
+        if index == 0 and risk_score >= 0.7:
+            priority = "高"
+        elif official_level != "normal" and index <= 1:
+            priority = "中"
+        else:
+            priority = "通常"
+        plan.append({
+            "priority": priority,
+            "action": action,
+            "reason": ACTION_REASONS.get(action, "安全確認のため"),
+        })
+    return plan
+
+
 def load_official_signals(conn, event_id: str) -> list[dict]:
     cur = conn.cursor()
     cur.execute("""
@@ -255,6 +304,53 @@ def load_area_official_signals(conn, limit: int = 20) -> list[dict]:
     return [dict(row) for row in cur.fetchall()]
 
 
+def analysis_cache_id(event_id: str, provider: str, model: str) -> str:
+    return f"{event_id}:{provider}:{model}"
+
+
+def load_cached_analysis(conn, event_id: str, provider: str, model: str) -> Optional[dict]:
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT analysis, model, risk_score, ai_error, created_at
+        FROM ai_analyses
+        WHERE id = ?
+    """, (analysis_cache_id(event_id, provider, model),))
+    row = cur.fetchone()
+    return dict(row) if row else None
+
+
+def save_cached_analysis(conn, event_id: str, provider: str, cache_model: str, output_model: str, risk_score: float, analysis: str, ai_error: Optional[str]) -> None:
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT OR REPLACE INTO ai_analyses
+            (id, event_id, provider, model, risk_score, analysis, ai_error)
+        VALUES
+            (?, ?, ?, ?, ?, ?, ?)
+    """, (
+        analysis_cache_id(event_id, provider, cache_model),
+        event_id,
+        provider,
+        output_model,
+        risk_score,
+        analysis,
+        ai_error,
+    ))
+    conn.commit()
+
+
+def clear_analysis_cache(event_id: Optional[str] = None) -> int:
+    conn = get_db()
+    cur = conn.cursor()
+    if event_id:
+        cur.execute("DELETE FROM ai_analyses WHERE event_id = ?", (event_id,))
+    else:
+        cur.execute("DELETE FROM ai_analyses")
+    deleted = cur.rowcount
+    conn.commit()
+    conn.close()
+    return deleted
+
+
 def get_official_signals(event: dict, conn=None) -> list[dict]:
     event_key = event.get("event_id") or event["id"]
     if conn is not None:
@@ -292,6 +388,7 @@ def build_risk_item(rows: list[dict]) -> dict:
         "risk_reason": explain_risk(representative, official_signals),
         "confidence_score": confidence,
         "confidence_label": confidence_label(confidence),
+        "action_plan": build_action_plan(representative, score, official_signals),
         "official_signals": official_signals,
         "official_summary": official_summary(official_signals),
     }
@@ -320,6 +417,31 @@ def latest_live_official_observation() -> Optional[dict]:
     return latest[0] if latest else None
 
 
+def live_official_summary() -> dict:
+    if not DB_FILE.exists():
+        return {"count": 0, "max_severity": 0.0, "status": "normal"}
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    ensure_official_table(conn)
+    observations = load_area_official_signals(conn, limit=100)
+    conn.close()
+    if not observations:
+        return {"count": 0, "max_severity": 0.0, "status": "normal"}
+    max_severity = max(item["severity"] for item in observations)
+    if max_severity >= 0.85:
+        status = "warning"
+    elif max_severity >= 0.6:
+        status = "watch"
+    else:
+        status = "normal"
+    return {
+        "count": len(observations),
+        "max_severity": round(max_severity, 3),
+        "status": status,
+        "sources": sorted({item["source"] for item in observations}),
+    }
+
+
 def build_data_summary(risks: list[dict]) -> dict:
     """トップ画面でデータの鮮度と根拠を説明するための集計を作る。"""
     official_signal_count = sum(len(r.get("official_signals", [])) for r in risks)
@@ -329,6 +451,7 @@ def build_data_summary(risks: list[dict]) -> dict:
         "event_count": len(risks),
         "official_signal_count": official_signal_count,
         "live_official_count": count_live_official_observations(),
+        "live_official_summary": live_official_summary(),
         "latest_live_official": latest_live_official_observation(),
         "earliest_timestamp": earliest,
         "latest_timestamp": latest,
@@ -369,6 +492,43 @@ def build_risk_timeline(risks: list[dict], hours: int) -> list[dict]:
     for bucket in buckets:
         bucket["max_score"] = round(bucket["max_score"], 3)
     return buckets
+
+
+def summarize_timeline(timeline: list[dict]) -> str:
+    """時間推移を、利用者向けの短い日本語に変換する。"""
+    if not timeline or sum(bucket["count"] for bucket in timeline) == 0:
+        return "対象期間内に目立ったリスク集中はありません。"
+    first_half = sum(bucket["count"] for bucket in timeline[: len(timeline) // 2])
+    second_half = sum(bucket["count"] for bucket in timeline[len(timeline) // 2 :])
+    high_count = sum(bucket["high_count"] for bucket in timeline)
+    if high_count > 0 and second_half >= first_half:
+        return "直近時間帯に高リスクを含む投稿集中があります。"
+    if second_half > first_half:
+        return "直近にかけてリスク投稿が増えています。"
+    return "対象期間内のリスクは比較的分散しています。"
+
+
+def build_hotspots(risks: list[dict], limit: int = 3) -> list[dict]:
+    """場所ごとの件数と最大リスクを集約し、重点確認エリアを返す。"""
+    grouped = {}
+    for risk in risks:
+        location = risk.get("location") or "不明"
+        item = grouped.setdefault(location, {"location": location, "count": 0, "max_score": 0.0, "categories": set()})
+        item["count"] += risk.get("sns_posts") or 1
+        item["max_score"] = max(item["max_score"], risk.get("risk_score", 0.0))
+        item["categories"].add(risk.get("category", "unknown"))
+
+    hotspots = []
+    for item in grouped.values():
+        hotspots.append({
+            "location": item["location"],
+            "count": item["count"],
+            "max_score": round(item["max_score"], 3),
+            "risk_level": risk_level(item["max_score"]),
+            "categories": sorted(item["categories"]),
+        })
+    hotspots.sort(key=lambda item: (item["max_score"], item["count"]), reverse=True)
+    return hotspots[:limit]
 
 
 def current_ai_config() -> dict:
@@ -471,6 +631,16 @@ def get_system_overview():
             "アプリで一覧・時間推移・詳細助言を表示",
             "LLMで利用者向けの行動提案を生成",
         ],
+        "evaluation_points": [
+            "SNS模擬投稿からノイズを除外し、同一イベント単位で集約できるか",
+            "公式情報を加えたときにリスクの説明可能性が上がるか",
+            "利用者が短時間で重点リスクと推奨行動を理解できるか",
+        ],
+        "limitations": [
+            "SNS投稿は実データではなく模擬データである",
+            "気象庁XMLは現在、愛知県コードの電文を軽量に正規化している段階である",
+            "最終判断は自治体・気象庁・交通機関の公式情報を確認する必要がある",
+        ],
         "ai": current_ai_config(),
         "database": {
             "event_count": event_count,
@@ -525,11 +695,14 @@ def get_dashboard(
     level_counts = Counter(r["risk_level"] for r in risks)
     top_risk = risks[0] if risks else None
     data_summary = build_data_summary(risks)
+    timeline = build_risk_timeline(risks, hours)
     return {
         "hours": hours,
         "basis": "SNS模擬投稿、気象リスク、交通・鉄道リスクを統合した参考評価",
         "data_summary": data_summary,
-        "risk_timeline": build_risk_timeline(risks, hours),
+        "risk_timeline": timeline,
+        "timeline_summary": summarize_timeline(timeline),
+        "hotspots": build_hotspots(risks),
         "ai_config": current_ai_config(),
         "risk_count": len(risks),
         "top_risk": top_risk,
@@ -585,6 +758,12 @@ async def sync_live_official_observations(limit: int = Query(default=20, ge=1, l
     saved = save_area_official_signals(conn, signals)
     conn.close()
     return {"fetched": len(signals), "saved": saved, "source": "気象庁防災情報XML"}
+
+
+@app.delete("/analysis/cache")
+def delete_analysis_cache(event_id: Optional[str] = Query(default=None)):
+    deleted = clear_analysis_cache(event_id)
+    return {"deleted": deleted, "event_id": event_id}
 
 
 @app.get("/official/context/{event_id_param}")
@@ -645,18 +824,41 @@ def get_event(event_id_param: str):
     return row_to_dict(row)
 
 @app.post("/analyze/{event_id_param}")
-async def analyze_event(event_id_param: str):
+async def analyze_event(event_id_param: str, refresh: bool = Query(default=False)):
+    refresh = refresh if isinstance(refresh, bool) else False
     conn = get_db()
     cur = conn.cursor()
     cur.execute("SELECT * FROM events WHERE id = ?", (event_id_param,))
     row = cur.fetchone()
-    conn.close()
     if not row:
+        conn.close()
         raise HTTPException(status_code=404, detail="Event not found")
     event = row_to_dict(row)
     risk_score = event.get("risk_score") or calc_risk_score(event)
     official_signals = get_official_signals(event)
     confidence = confidence_score(event, official_signals)
+    provider = AI_PROVIDER
+    model_name = OPENAI_MODEL if AI_PROVIDER == "openai" else OLLAMA_MODEL
+    cached = None if refresh else load_cached_analysis(conn, event_id_param, provider, model_name)
+    if cached:
+        conn.close()
+        return {
+            "event_id": event_id_param,
+            "risk_score": cached["risk_score"],
+            "risk_factors": risk_factors(event),
+            "risk_reason": explain_risk(event, official_signals),
+            "confidence_score": confidence,
+            "confidence_label": confidence_label(confidence),
+            "action_plan": build_action_plan(event, risk_score, official_signals),
+            "official_signals": official_signals,
+            "analysis": cached["analysis"],
+            "model": cached["model"],
+            "provider": provider,
+            "ai_error": cached["ai_error"],
+            "cached": True,
+            "created_at": cached["created_at"],
+        }
+
     prompt = build_prompt(event, risk_score)
     try:
         analysis, model = await call_ai(prompt)
@@ -666,6 +868,8 @@ async def analyze_event(event_id_param: str):
         ai_error = str(e)
     else:
         ai_error = None
+    save_cached_analysis(conn, event_id_param, provider, model_name, model, risk_score, analysis, ai_error)
+    conn.close()
     return {
         "event_id": event_id_param,
         "risk_score": risk_score,
@@ -673,11 +877,13 @@ async def analyze_event(event_id_param: str):
         "risk_reason": explain_risk(event, official_signals),
         "confidence_score": confidence,
         "confidence_label": confidence_label(confidence),
+        "action_plan": build_action_plan(event, risk_score, official_signals),
         "official_signals": official_signals,
         "analysis": analysis,
         "model": model,
         "provider": AI_PROVIDER,
         "ai_error": ai_error,
+        "cached": False,
     }
 
 @app.get("/stats")
