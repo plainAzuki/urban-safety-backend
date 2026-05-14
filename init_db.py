@@ -57,6 +57,21 @@ CREATE TABLE IF NOT EXISTS official_observations (
 CREATE INDEX IF NOT EXISTS idx_official_event_id ON official_observations(event_id);
 """
 
+CREATE_AREA_OFFICIAL_TABLE = """
+CREATE TABLE IF NOT EXISTS official_area_observations (
+    id          TEXT PRIMARY KEY,
+    source      TEXT NOT NULL,
+    area        TEXT NOT NULL,
+    label       TEXT NOT NULL,
+    severity    REAL NOT NULL,
+    status      TEXT,
+    detail      TEXT,
+    observed_at TEXT,
+    created_at  TEXT DEFAULT (datetime('now', 'localtime'))
+);
+CREATE INDEX IF NOT EXISTS idx_area_observed_at ON official_area_observations(observed_at);
+"""
+
 # ─── リスクスコア計算（main.pyと同じロジック） ──────────────
 WEIGHTS = {
     "fire":             {"sns": 0.8, "weather": 0.1, "transport": 0.1},
@@ -92,7 +107,7 @@ def main():
     conn = sqlite3.connect(DB_FILE)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    cur.executescript(CREATE_TABLE + CREATE_INDEX + CREATE_OFFICIAL_TABLE)
+    cur.executescript(CREATE_TABLE + CREATE_INDEX + CREATE_OFFICIAL_TABLE + CREATE_AREA_OFFICIAL_TABLE)
     conn.commit()
     print(f"✅ テーブル作成完了: {DB_FILE}")
 
