@@ -1,0 +1,67 @@
+[
+  {
+    "id": "evt_001",
+    "timestamp": "2026-05-01 14:32",
+    "text": "駅前で大きな煙が上がってる。消防車が何台も来てる！",
+    "location": "Toyota Station North Exit",
+    "lat": 35.0864,
+    "lng": 137.1566,
+    "category": "fire",
+    "severity": "high",
+    "weather_severity": 0.2,
+    "transport_severity": 0.6,
+    "source_count": 8
+  },
+  {
+    "id": "evt_002",
+    "timestamp": "2026-05-01 15:10",
+    "text": "国道155号で2台が衝突事故。渋滞が激しい。救急車が来た。",
+    "location": "Route 155 near Josui",
+    "lat": 35.0812,
+    "lng": 137.1623,
+    "category": "traffic_accident",
+    "severity": "medium",
+    "weather_severity": 0.1,
+    "transport_severity": 0.8,
+    "source_count": 5
+  },
+  {
+    "id": "evt_003",
+    "timestamp": "2026-05-01 15:45",
+    "text": "大雨で矢作川の水位が上がってる。近くの道路が冠水してる模様。",
+    "location": "Yahagi River Area",
+    "lat": 35.0753,
+    "lng": 137.1501,
+    "category": "flood",
+    "severity": "high",
+    "weather_severity": 0.9,
+    "transport_severity": 0.4,
+    "source_count": 12
+  },
+  {
+    "id": "evt_004",
+    "timestamp": "2026-05-01 16:20",
+    "text": "名鉄三河線が人身事故で運転見合わせ中。復旧の見通し立たず。",
+    "location": "Meitetsu Mikawa Line",
+    "lat": 35.0891,
+    "lng": 137.1590,
+    "category": "railway",
+    "severity": "medium",
+    "weather_severity": 0.1,
+    "transport_severity": 0.9,
+    "source_count": 20
+  },
+  {
+    "id": "evt_005",
+    "timestamp": "2026-05-01 16:55",
+    "text": "商店街でなんか警察たくさんいる。よくわからん。",
+    "location": "Toyota Shopping Street",
+    "lat": 35.0870,
+    "lng": 137.1555,
+    "category": "unknown",
+    "severity": "low",
+    "weather_severity": 0.0,
+    "transport_severity": 0.1,
+    "source_count": 2
+  }
+]
