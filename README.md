@@ -77,6 +77,8 @@ Ollama が起動していない場合でも、詳細分析は `rule-based-fallba
 - `evaluation_dataset.csv`: `post_id`, `event_id`, `is_noise`, `event_type`, `official_match`, `ground_truth_risk` などを固定した評価用データです。
 - `evaluation_results.json`: A キーワード方式、B SNSのみ、C SNS+気象、D SNS+気象+交通の Precision / Recall / F1 を保存します。
 - `evaluation_metrics.csv`: 表計算ソフトで棒グラフを作りやすい条件別指標です。
+- `evaluation_failures.csv`: 条件別の誤検知・見逃し例を保存します。
+- `evaluation_metrics_chart.svg`: Precision / Recall / F1 の棒グラフです。
 - `evaluation_report.md`: 次回報告・卒論下書きに貼り付けやすい評価レポートです。
 - LLMは検知精度に混ぜず、構造化データによるリスク判定だけを評価します。
 - 予測時には正解ラベルの `is_noise` を使わず、投稿本文から推定した `detected_event_type` を使います。

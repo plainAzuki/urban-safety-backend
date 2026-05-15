@@ -4,6 +4,7 @@ import csv
 import json
 import math
 import sqlite3
+from html import escape
 from collections import Counter
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -16,6 +17,8 @@ DATASET_FILE = Path(__file__).parent / "evaluation_dataset.csv"
 RESULT_FILE = Path(__file__).parent / "evaluation_results.json"
 REPORT_FILE = Path(__file__).parent / "evaluation_report.md"
 METRICS_FILE = Path(__file__).parent / "evaluation_metrics.csv"
+FAILURES_FILE = Path(__file__).parent / "evaluation_failures.csv"
+CHART_FILE = Path(__file__).parent / "evaluation_metrics_chart.svg"
 TARGET_DATASET_SIZE = 300
 TIME_WINDOW_HOURS = 3
 DISTANCE_WINDOW_KM = 5.0
@@ -386,6 +389,7 @@ def evaluate_rows(rows: list[dict]) -> dict:
     multi_source_failures = collect_failure_examples(rows, multi_predictions)
 
     clustering = evaluate_clustering(rows)
+    comparison_summary = build_comparison_summary(results)
     return {
         "dataset_size": len(rows),
         "event_count": len({row["event_id"] for row in rows if not row["is_noise"]}),
@@ -393,6 +397,7 @@ def evaluate_rows(rows: list[dict]) -> dict:
         "official_match_count": sum(1 for row in rows if row["official_match"]),
         "class_counts": dict(Counter(y_true_levels)),
         "results": results,
+        "comparison_summary": comparison_summary,
         "best_mode": max(results, key=lambda item: item["f1"]) if results else None,
         "failure_examples": multi_source_failures,
         "failure_examples_by_mode": failure_examples_by_mode,
@@ -404,6 +409,23 @@ def evaluate_rows(rows: list[dict]) -> dict:
         },
         "weight_design": build_weight_design_table(),
         "severity_conversion_table": severity_conversion_table(),
+    }
+
+
+def build_comparison_summary(results: list[dict]) -> dict:
+    """SNS単独から多ソース融合でどれだけ改善したかを、発表用に明示する。"""
+    by_mode = {result["mode"]: result for result in results}
+    sns_only = by_mode.get("sns_only")
+    multi_source = by_mode.get("multi_source")
+    if not sns_only or not multi_source:
+        return {}
+    return {
+        "baseline_mode": sns_only["mode"],
+        "proposed_mode": multi_source["mode"],
+        "precision_delta": round(multi_source["precision"] - sns_only["precision"], 3),
+        "recall_delta": round(multi_source["recall"] - sns_only["recall"], 3),
+        "f1_delta": round(multi_source["f1"] - sns_only["f1"], 3),
+        "macro_f1_delta": round(multi_source["macro_f1"] - sns_only["macro_f1"], 3),
     }
 
 
@@ -551,6 +573,68 @@ def export_metrics(summary: dict, path: Path = METRICS_FILE) -> None:
             writer.writerow({key: result[key] for key in fieldnames})
 
 
+def export_failures(summary: dict, path: Path = FAILURES_FILE) -> None:
+    """誤検知・見逃しの具体例を、発表資料へ転記しやすいCSVで保存する。"""
+    fieldnames = ["mode", "label", "error_type", "post_id", "truth", "predicted", "text"]
+    with path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for mode, examples in summary["failure_examples_by_mode"].items():
+            label = MODE_LABELS[mode]
+            for error_type, items in (
+                ("false_positive", examples["false_positives"]),
+                ("false_negative", examples["false_negatives"]),
+            ):
+                for item in items:
+                    writer.writerow({
+                        "mode": mode,
+                        "label": label,
+                        "error_type": error_type,
+                        "post_id": item["post_id"],
+                        "truth": item["truth"],
+                        "predicted": item["predicted"],
+                        "text": item["text"],
+                    })
+
+
+def export_metrics_chart(summary: dict, path: Path = CHART_FILE) -> None:
+    """Precision / Recall / F1 を、レポートに貼れるSVG棒グラフとして保存する。"""
+    width = 920
+    row_height = 74
+    top = 72
+    left = 210
+    bar_width = 560
+    height = top + row_height * len(summary["results"]) + 58
+    colors = {"precision": "#4EA8DE", "recall": "#FFB000", "f1": "#30D158"}
+    lines = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
+        '<rect width="100%" height="100%" fill="#111111"/>',
+        '<text x="32" y="38" fill="#F2F2F7" font-size="24" font-weight="700">条件別 Precision / Recall / F1</text>',
+        '<text x="32" y="60" fill="#AEAEB2" font-size="13">A〜D条件の比較実験結果</text>',
+    ]
+    for index in range(6):
+        x = left + index * (bar_width / 5)
+        value = index / 5
+        lines.extend([
+            f'<line x1="{x:.1f}" y1="{top - 18}" x2="{x:.1f}" y2="{height - 44}" stroke="#2C2C2E" stroke-width="1"/>',
+            f'<text x="{x - 10:.1f}" y="{height - 22}" fill="#8E8E93" font-size="11">{value:.1f}</text>',
+        ])
+    for row_index, result in enumerate(summary["results"]):
+        y = top + row_index * row_height
+        lines.append(f'<text x="32" y="{y + 26}" fill="#F2F2F7" font-size="14" font-weight="700">{escape(result["label"])}</text>')
+        for metric_index, metric in enumerate(("precision", "recall", "f1")):
+            bar_y = y + 8 + metric_index * 18
+            value = float(result[metric])
+            fill_width = value * bar_width
+            lines.extend([
+                f'<rect x="{left}" y="{bar_y}" width="{bar_width}" height="10" rx="5" fill="#242426"/>',
+                f'<rect x="{left}" y="{bar_y}" width="{fill_width:.1f}" height="10" rx="5" fill="{colors[metric]}"/>',
+                f'<text x="{left + bar_width + 14}" y="{bar_y + 9}" fill="{colors[metric]}" font-size="12" font-weight="700">{metric.upper()} {value:.3f}</text>',
+            ])
+    lines.append("</svg>")
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
 def f1_bar(value: float) -> str:
     filled = round(value * 20)
     return "#" * filled + "." * (20 - filled)
@@ -588,6 +672,18 @@ def write_markdown_report(summary: dict, path: Path = REPORT_FILE) -> None:
             f"{result['f1']:.3f} | {result['macro_f1']:.3f} |"
         )
 
+    comparison = summary.get("comparison_summary") or {}
+    if comparison:
+        lines.extend([
+            "",
+            "### SNSのみから多ソース融合への改善",
+            "",
+            f"- Precision差分: {comparison['precision_delta']:+.3f}",
+            f"- Recall差分: {comparison['recall_delta']:+.3f}",
+            f"- F1差分: {comparison['f1_delta']:+.3f}",
+            f"- Macro F1差分: {comparison['macro_f1_delta']:+.3f}",
+        ])
+
     lines.extend([
         "",
         "### 評価条件",
@@ -604,6 +700,10 @@ def write_markdown_report(summary: dict, path: Path = REPORT_FILE) -> None:
     lines.extend(["", "## F1棒グラフ", ""])
     for result in summary["results"]:
         lines.append(f"- {result['label']}: `{f1_bar(result['f1'])}` {result['f1']:.3f}")
+    lines.extend([
+        "",
+        "SVG版の棒グラフは `evaluation_metrics_chart.svg` に保存している。",
+    ])
 
     rule = summary["official_link_rule"]
     lines.extend([
@@ -700,10 +800,14 @@ def main() -> None:
     export_dataset(rows)
     RESULT_FILE.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     export_metrics(summary)
+    export_failures(summary)
+    export_metrics_chart(summary)
     write_markdown_report(summary)
     print(f"評価データセット: {DATASET_FILE} ({len(rows)}件)")
     print(f"評価結果: {RESULT_FILE}")
     print(f"評価指標CSV: {METRICS_FILE}")
+    print(f"失敗例CSV: {FAILURES_FILE}")
+    print(f"評価グラフSVG: {CHART_FILE}")
     print(f"評価レポート: {REPORT_FILE}")
     for result in summary["results"]:
         print(

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="426" viewBox="0 0 920 426">
+<rect width="100%" height="100%" fill="#111111"/>
+<text x="32" y="38" fill="#F2F2F7" font-size="24" font-weight="700">条件別 Precision / Recall / F1</text>
+<text x="32" y="60" fill="#AEAEB2" font-size="13">A〜D条件の比較実験結果</text>
+<line x1="210.0" y1="54" x2="210.0" y2="382" stroke="#2C2C2E" stroke-width="1"/>
+<text x="200.0" y="404" fill="#8E8E93" font-size="11">0.0</text>
+<line x1="322.0" y1="54" x2="322.0" y2="382" stroke="#2C2C2E" stroke-width="1"/>
+<text x="312.0" y="404" fill="#8E8E93" font-size="11">0.2</text>
+<line x1="434.0" y1="54" x2="434.0" y2="382" stroke="#2C2C2E" stroke-width="1"/>
+<text x="424.0" y="404" fill="#8E8E93" font-size="11">0.4</text>
+<line x1="546.0" y1="54" x2="546.0" y2="382" stroke="#2C2C2E" stroke-width="1"/>
+<text x="536.0" y="404" fill="#8E8E93" font-size="11">0.6</text>
+<line x1="658.0" y1="54" x2="658.0" y2="382" stroke="#2C2C2E" stroke-width="1"/>
+<text x="648.0" y="404" fill="#8E8E93" font-size="11">0.8</text>
+<line x1="770.0" y1="54" x2="770.0" y2="382" stroke="#2C2C2E" stroke-width="1"/>
+<text x="760.0" y="404" fill="#8E8E93" font-size="11">1.0</text>
+<text x="32" y="98" fill="#F2F2F7" font-size="14" font-weight="700">A キーワード方式</text>
+<rect x="210" y="80" width="560" height="10" rx="5" fill="#242426"/>
+<rect x="210" y="80" width="560.0" height="10" rx="5" fill="#4EA8DE"/>
+<text x="784" y="89" fill="#4EA8DE" font-size="12" font-weight="700">PRECISION 1.000</text>
+<rect x="210" y="98" width="560" height="10" rx="5" fill="#242426"/>
+<rect x="210" y="98" width="337.1" height="10" rx="5" fill="#FFB000"/>
+<text x="784" y="107" fill="#FFB000" font-size="12" font-weight="700">RECALL 0.602</text>
+<rect x="210" y="116" width="560" height="10" rx="5" fill="#242426"/>
+<rect x="210" y="116" width="420.6" height="10" rx="5" fill="#30D158"/>
+<text x="784" y="125" fill="#30D158" font-size="12" font-weight="700">F1 0.751</text>
+<text x="32" y="172" fill="#F2F2F7" font-size="14" font-weight="700">B SNSのみ</text>
+<rect x="210" y="154" width="560" height="10" rx="5" fill="#242426"/>
+<rect x="210" y="154" width="344.4" height="10" rx="5" fill="#4EA8DE"/>
+<text x="784" y="163" fill="#4EA8DE" font-size="12" font-weight="700">PRECISION 0.615</text>
+<rect x="210" y="172" width="560" height="10" rx="5" fill="#242426"/>
+<rect x="210" y="172" width="111.4" height="10" rx="5" fill="#FFB000"/>
+<text x="784" y="181" fill="#FFB000" font-size="12" font-weight="700">RECALL 0.199</text>
+<rect x="210" y="190" width="560" height="10" rx="5" fill="#242426"/>
+<rect x="210" y="190" width="168.6" height="10" rx="5" fill="#30D158"/>
+<text x="784" y="199" fill="#30D158" font-size="12" font-weight="700">F1 0.301</text>
+<text x="32" y="246" fill="#F2F2F7" font-size="14" font-weight="700">C SNS+気象</text>
+<rect x="210" y="228" width="560" height="10" rx="5" fill="#242426"/>
+<rect x="210" y="228" width="441.8" height="10" rx="5" fill="#4EA8DE"/>
+<text x="784" y="237" fill="#4EA8DE" font-size="12" font-weight="700">PRECISION 0.789</text>
+<rect x="210" y="246" width="560" height="10" rx="5" fill="#242426"/>
+<rect x="210" y="246" width="260.4" height="10" rx="5" fill="#FFB000"/>
+<text x="784" y="255" fill="#FFB000" font-size="12" font-weight="700">RECALL 0.465</text>
+<rect x="210" y="264" width="560" height="10" rx="5" fill="#242426"/>
+<rect x="210" y="264" width="327.6" height="10" rx="5" fill="#30D158"/>
+<text x="784" y="273" fill="#30D158" font-size="12" font-weight="700">F1 0.585</text>
+<text x="32" y="320" fill="#F2F2F7" font-size="14" font-weight="700">D SNS+気象+交通</text>
+<rect x="210" y="302" width="560" height="10" rx="5" fill="#242426"/>
+<rect x="210" y="302" width="483.3" height="10" rx="5" fill="#4EA8DE"/>
+<text x="784" y="311" fill="#4EA8DE" font-size="12" font-weight="700">PRECISION 0.863</text>
+<rect x="210" y="320" width="560" height="10" rx="5" fill="#242426"/>
+<rect x="210" y="320" width="439.0" height="10" rx="5" fill="#FFB000"/>
+<text x="784" y="329" fill="#FFB000" font-size="12" font-weight="700">RECALL 0.784</text>
+<rect x="210" y="338" width="560" height="10" rx="5" fill="#242426"/>
+<rect x="210" y="338" width="460.3" height="10" rx="5" fill="#30D158"/>
+<text x="784" y="347" fill="#30D158" font-size="12" font-weight="700">F1 0.822</text>
+</svg>

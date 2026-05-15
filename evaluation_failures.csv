@@ -1,0 +1,22 @@
+mode,label,error_type,post_id,truth,predicted,text
+keyword,A キーワード方式,false_negative,eval_0021,medium,low,商業ビルの裏で小火が燃えている！ 煙が出てる！
+keyword,A キーワード方式,false_negative,eval_0022,medium,low,「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」
+keyword,A キーワード方式,false_negative,eval_0024,medium,low,裏のビルに火がついたようだ　今朝の作業をしている工事関係者も出てきた　どうなんだって工事の方と言いながら消火器を持った人も出てきた　もう大丈夫そう言って工事の方が火を消した　煙が出たのはもうなくなった
+sns_only,B SNSのみ,false_positive,eval_0005,low,medium,今日も雨です。
+sns_only,B SNSのみ,false_positive,eval_0008,low,medium,今日も朝から雨でした。
+sns_only,B SNSのみ,false_positive,eval_0011,low,medium,今日は雨が降っていて、日が短くなっています。
+sns_only,B SNSのみ,false_negative,eval_0021,medium,low,商業ビルの裏で小火が燃えている！ 煙が出てる！
+sns_only,B SNSのみ,false_negative,eval_0022,medium,low,「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」
+sns_only,B SNSのみ,false_negative,eval_0023,medium,low,「裏に火事が起こったみたいです。煙がちょっと出てるみたいです」と書きました。
+sns_weather,C SNS+気象,false_positive,eval_0005,low,medium,今日も雨です。
+sns_weather,C SNS+気象,false_positive,eval_0008,low,medium,今日も朝から雨でした。
+sns_weather,C SNS+気象,false_positive,eval_0011,low,medium,今日は雨が降っていて、日が短くなっています。
+sns_weather,C SNS+気象,false_negative,eval_0021,medium,low,商業ビルの裏で小火が燃えている！ 煙が出てる！
+sns_weather,C SNS+気象,false_negative,eval_0022,medium,low,「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」
+sns_weather,C SNS+気象,false_negative,eval_0023,medium,low,「裏に火事が起こったみたいです。煙がちょっと出てるみたいです」と書きました。
+multi_source,D SNS+気象+交通,false_positive,eval_0005,low,medium,今日も雨です。
+multi_source,D SNS+気象+交通,false_positive,eval_0008,low,medium,今日も朝から雨でした。
+multi_source,D SNS+気象+交通,false_positive,eval_0011,low,medium,今日は雨が降っていて、日が短くなっています。
+multi_source,D SNS+気象+交通,false_negative,eval_0021,medium,low,商業ビルの裏で小火が燃えている！ 煙が出てる！
+multi_source,D SNS+気象+交通,false_negative,eval_0022,medium,low,「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」
+multi_source,D SNS+気象+交通,false_negative,eval_0023,medium,low,「裏に火事が起こったみたいです。煙がちょっと出てるみたいです」と書きました。

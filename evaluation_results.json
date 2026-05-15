@@ -54,6 +54,14 @@
       "macro_f1": 0.445
     }
   ],
+  "comparison_summary": {
+    "baseline_mode": "sns_only",
+    "proposed_mode": "multi_source",
+    "precision_delta": 0.248,
+    "recall_delta": 0.585,
+    "f1_delta": 0.521,
+    "macro_f1_delta": 0.376
+  },
   "best_mode": {
     "mode": "multi_source",
     "label": "D SNS+気象+交通",
