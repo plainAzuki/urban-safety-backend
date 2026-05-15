@@ -10,6 +10,7 @@ def main():
     checks = [
         ("/health", "status"),
         ("/dashboard?hours=24", "risks"),
+        ("/evaluation/summary", "results"),
         ("/system/overview", "pipeline"),
         ("/official/sources", "sources"),
         ("/official/live", "observations"),

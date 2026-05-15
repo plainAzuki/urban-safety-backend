@@ -11,7 +11,14 @@ import httpx
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
-from official_sources import fetch_jma_aichi_signals, official_summary, signals_from_event, source_catalog
+from evaluation import build_evaluation_summary
+from official_sources import (
+    fetch_jma_aichi_signals,
+    official_summary,
+    severity_conversion_table,
+    signals_from_event,
+    source_catalog,
+)
 
 AI_PROVIDER = os.getenv("AI_PROVIDER", "ollama").lower()
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
@@ -642,6 +649,7 @@ def get_system_overview():
             "最終判断は自治体・気象庁・交通機関の公式情報を確認する必要がある",
         ],
         "ai": current_ai_config(),
+        "severity_conversion_table": severity_conversion_table(),
         "database": {
             "event_count": event_count,
             "noise_count": noise_count,
@@ -649,7 +657,14 @@ def get_system_overview():
             "live_official_observation_count": live_official_count,
         },
         "weights": WEIGHTS,
+        "evaluation": build_evaluation_summary(),
     }
+
+
+@app.get("/evaluation/summary")
+def get_evaluation_summary():
+    """研究評価用に、SNS単独と多ソース融合の比較指標を返す。"""
+    return build_evaluation_summary()
 
 
 @app.get("/risks")
@@ -699,6 +714,7 @@ def get_dashboard(
     return {
         "hours": hours,
         "basis": "SNS模擬投稿、気象リスク、交通・鉄道リスクを統合した参考評価",
+        "evaluation_summary": build_evaluation_summary(),
         "data_summary": data_summary,
         "risk_timeline": timeline,
         "timeline_summary": summarize_timeline(timeline),
@@ -733,7 +749,7 @@ def sync_official_observations(
 
 @app.get("/official/sources")
 def get_official_sources():
-    return {"sources": source_catalog()}
+    return {"sources": source_catalog(), "severity_conversion_table": severity_conversion_table()}
 
 
 @app.get("/official/live")

@@ -1,0 +1,301 @@
+post_id,text,timestamp,lat,lon,detected_event_type,event_type,event_id,is_noise,social_risk,weather_severity,transport_severity,official_signal_id,official_match,official_link_time_ok,official_link_distance_ok,official_link_type_ok,official_link_distance_km,risk_level,ground_truth_risk
+eval_0001,豊田駅前で火事が起こって煙が出てる！消防車が来てる。,2026-05-01 14:04,35.083271,137.152173,fire,fire,fire_001_00,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0002,「豊田市駅前のビルに火事が！消防車が何台も出てきて煙があふれててすごい騒ぎです。火事はどんなの事で？」,2026-05-01 14:11,35.087392,137.158153,fire,fire,fire_001_00,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0003,豊田市駅前に大きな火事が起こった。煙が高く上がっています。消防車が急いでやってきたようです。,2026-05-01 14:18,35.08473,137.15758,fire,fire,fire_001_00,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0004,豊田市駅前で火事が起こっていて、煙が上がってます。消防車が来ています,2026-05-01 14:25,35.088126,137.156208,fire,fire,fire_001_00,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0005,今日も雨です。,2026-05-01 14:29,35.084054,137.159508,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0006,「豊田駅前で火事が起こってました。消防車が来ました。煙が大きなものになってしまいました。やばいです…」,2026-05-01 14:36,35.083462,137.161909,fire,fire,fire_001_00,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0007,豊田駅前で火事が出た。消防車が走り出す中、煙があふれてる,2026-05-01 14:15,35.085564,137.153482,fire,fire,fire_001_00,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0008,今日も朝から雨でした。,2026-05-01 14:20,35.08673,137.154392,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0009,今日は晴れがいいですね。,2026-05-01 14:25,35.088919,137.155006,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0010,「豊田駅前で火事が！消防車が集まって煙が高く上がってる」,2026-05-01 14:30,35.084467,137.158311,fire,fire,fire_001_00,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0011,今日は雨が降っていて、日が短くなっています。,2026-05-01 14:34,35.085633,137.160009,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0012,今日も朝から雨で出勤が遅れました。,2026-05-01 14:39,35.088411,137.156662,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0013,「豊田市駅前で火事があがってます。消防車がすばらしいです。煙がうまくでてきません…」,2026-05-01 14:45,35.087745,137.162943,fire,fire,fire_001_00,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0014,「豊田駅前で大火事！消防車が走り出す！見ててください」,2026-05-01 14:24,35.089272,137.154206,fire,fire,fire_001_00,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0015,今日買った本を読んだ。,2026-05-01 14:29,35.084443,137.156495,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0016,豊田駅前で火事が起こったみたいです。消防車が出ています。,2026-05-01 14:35,35.085707,137.154925,fire,fire,fire_001_00,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0017,「豊田市駅前に消防車が何台も出動！駅前のビルに煙が出てる！どうしたの？？」,2026-05-01 14:42,35.087659,137.158082,fire,fire,fire_001_00,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0018,豊田市駅前で火事が起こって煙が出てるです。消防車が急ぐ様子です。,2026-05-01 14:49,35.087662,137.159274,fire,fire,fire_001_00,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0019,今日買った新しいパジャマが着るのを楽しみながら待っています。,2026-05-01 14:59,35.087669,137.159854,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0020,今日の昼食は、うどんに、ごまめととろとろを入れて食べた。,2026-05-01 15:06,35.085258,137.161204,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0021,商業ビルの裏で小火が燃えている！ 煙が出てる！,2026-05-01 15:00,35.087071,137.151593,fire,fire,fire_002_00,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0022,「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」,2026-05-01 15:09,35.088252,137.1519,fire,fire,fire_002_00,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0023,「裏に火事が起こったみたいです。煙がちょっと出てるみたいです」と書きました。,2026-05-01 15:18,35.086276,137.15195,fire,fire,fire_002_00,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0024,裏のビルに火がついたようだ　今朝の作業をしている工事関係者も出てきた　どうなんだって工事の方と言いながら消火器を持った人も出てきた　もう大丈夫そう言って工事の方が火を消した　煙が出たのはもうなくなった,2026-05-01 15:27,35.088424,137.157834,fire,fire,fire_002_00,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0025,商業ビルの裏で小さな火事が起きたようです。少しの煙が上がっています。,2026-05-01 15:36,35.083919,137.156761,fire,fire,fire_002_00,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0026,「商業街の裏で小火が見えました　煙が出てるから注意して下さい」,2026-05-01 15:45,35.08535,137.157729,fire,fire,fire_002_00,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0027,国道155号でトラックと車が激突。トラックのドアが開いたままで、運転手は意識なし。,2026-05-01 15:54,35.07994,137.168583,,traffic_accident,traffic_001_00,False,0.5,0.1,0.9,transport:traffic_001_00,True,True,True,True,0.0,high,high
+eval_0028,国道155号で大型トラックと車が激突！？車の後部が大きな亀裂が入っています…トラックはもうどこかへ走り去ってしまいました。,2026-05-01 15:34,35.084244,137.157031,,traffic_accident,traffic_001_00,False,0.5,0.1,0.9,transport:traffic_001_00,True,True,True,True,0.0,high,high
+eval_0029,国道155号でトラックと乗用車が激突！　１３時ごろ、道中の交差点でトラックが急ブレーキをかけると乗用車が横転、トラックが止まった所にぶつかってしまいました。トラックの運転手はけがれをしていたようです。,2026-05-01 15:42,35.082708,137.159223,,traffic_accident,traffic_001_00,False,0.5,0.1,0.9,transport:traffic_001_00,True,True,True,True,0.0,high,high
+eval_0030,国道155号で大型トラックと乗用車が激突！　トラックは横に転がって、乗用車は窓ガラスが割れて止まった。　運転手はトラックの運転手が重傷、乗用車の運転手はけがけで救助された。　何が起こったのか心配,2026-05-01 15:50,35.077288,137.162521,,traffic_accident,traffic_001_00,False,0.5,0.1,0.9,transport:traffic_001_00,True,True,True,True,0.0,high,high
+eval_0031,国道155号で大型トラックと乗用車が激突した！？　トラックの後部に大きな擦り傷が！　乗用車のドアの窓が割れていた　運転手の様子が気になっている,2026-05-01 15:58,35.077706,137.163628,,traffic_accident,traffic_001_00,False,0.5,0.1,0.9,transport:traffic_001_00,True,True,True,True,0.0,high,high
+eval_0032,今日は晴れです。,2026-05-01 16:02,35.083188,137.157501,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0033,国道155号でトラックと車が激突しました。トラックは横転して運転手は負けました。,2026-05-01 16:10,35.08029,137.16554,,traffic_accident,traffic_001_00,False,0.5,0.1,0.2,,False,True,True,False,0.0,high,high
+eval_0034,国道155号で大型トラックが乗用車に激突　車体が大破片付けあり　車内から出血が見つかる　警視庁の男性によると　大型トラックは左折しなかったらか　現在は車内から遺体が出ている,2026-05-01 16:18,35.082661,137.164968,,traffic_accident,traffic_001_00,False,0.5,0.1,0.9,transport:traffic_001_00,True,True,True,True,0.0,high,high
+eval_0035,国道155号でトラックが乗用車に突っ込まれた。トラックは横に倒れて、トラックの運転手は意識不明です。,2026-05-01 15:58,35.076284,137.157366,,traffic_accident,traffic_001_00,False,0.5,0.1,0.9,transport:traffic_001_00,True,True,True,True,0.0,high,high
+eval_0036,矢作川が増水！周辺の道路も冠水で水が深くなって歩くことが難しいです。,2026-05-01 16:04,35.071586,137.145196,flood,flood,flood_001_00,False,0.6,0.9,0.4,weather:flood_001_00,True,True,True,True,0.0,high,high
+eval_0037,矢作川で冠水！矢作川沿い歩いて帰れなくて困った😭,2026-05-01 16:10,35.073047,137.146989,flood,flood,flood_001_00,False,0.6,0.9,0.4,weather:flood_001_00,True,True,True,True,0.0,high,high
+eval_0038,国道155号でトラックと車が衝突しちゃった！トラックが停まってたらしくて、車の人が重傷か死ぬか！怖いです…,2026-05-01 16:14,35.080455,137.162752,traffic_accident,traffic_accident,traffic_001_00,False,0.5,0.1,0.9,transport:traffic_001_00,True,True,True,True,0.0,high,high
+eval_0039,矢作川水害　みやざかがわすいがい　やつかわ　みやざか　かずかわ　増水　みっすい　みっすい　みっすい　増水　増水　みっすい　みっ水　みっすい　増水　増水　みっすい,2026-05-01 16:20,35.078761,137.149157,flood,flood,flood_001_00,False,0.6,0.9,0.4,weather:flood_001_00,True,True,True,True,0.0,high,high
+eval_0040,矢作川の増水で、県道が冠水！県道１５号線の新橋交差点は、水が一メートル以上もあふれてて、車は通行不能です。,2026-05-01 16:26,35.074542,137.15197,flood,flood,flood_001_00,False,0.6,0.9,0.4,weather:flood_001_00,True,True,True,True,0.0,high,high
+eval_0041,国道155号で大型トラックと乗用車が激突！　トラックの荷物が散乱して、乗用車のドアがびびび！　車内の人がひくひく！　運転手はお腹に手を当てて、もう１度もこの事故は起きてはならないと思いましたが…。,2026-05-01 16:30,35.077085,137.166979,traffic_accident,traffic_accident,traffic_001_00,False,0.5,0.1,0.9,transport:traffic_001_00,True,True,True,True,0.0,high,high
+eval_0042,矢作川の水位が大変高くなって、道路も水がかぶって歩くことができなくなって困ってます。,2026-05-01 16:08,35.073441,137.146829,flood,flood,flood_001_00,False,0.6,0.9,0.4,weather:flood_001_00,True,True,True,True,0.0,high,high
+eval_0043,「矢作川増水で周辺道路冠水！西尾車で大混乱！水でわたれた道路がわたわたの！」,2026-05-01 16:14,35.075565,137.14726,flood,flood,flood_001_00,False,0.6,0.9,0.4,weather:flood_001_00,True,True,True,True,0.0,high,high
+eval_0044,矢作川が増水で周辺道路が冠水！中根橋は歩道まで水がたまってます。雨が強いままだとどこまで冠水になっちゃうんだろ。,2026-05-01 16:20,35.078678,137.146164,flood,flood,flood_001_00,False,0.6,0.2,0.2,,False,True,True,False,0.0,high,high
+eval_0045,今日は雨が降っていて少し涼しいです。,2026-05-01 16:24,35.082307,137.15433,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0046,矢作川が増水！周辺の道路が冠水！おかしくない雨です…,2026-05-01 16:30,35.07403,137.150764,flood,flood,flood_001_00,False,0.6,0.9,0.4,weather:flood_001_00,True,True,True,True,0.0,high,high
+eval_0047,矢作川の水位が上がって、周辺の道が水の中です。水面から一歩も出る場所がありません。,2026-05-01 16:36,35.074659,137.150948,flood,flood,flood_001_00,False,0.6,0.9,0.4,weather:flood_001_00,True,True,True,True,0.0,high,high
+eval_0048,「矢作川増水で冠水！周辺道路水浸かり、車で通行不能です。水車や被害報道車が多数見えます。安全な場所に避難してください。雨がやめに止まないので、しばらく水が増える恐れがあります。ご注意ください」,2026-05-01 16:42,35.075107,137.155557,flood,flood,flood_001_00,False,0.6,0.9,0.4,weather:flood_001_00,True,True,True,True,0.0,high,high
+eval_0049,矢作川増水で周辺の道路冠水に困ります。,2026-05-01 16:20,35.07705,137.145974,flood,flood,flood_001_00,False,0.6,0.9,0.4,weather:flood_001_00,True,True,True,True,0.0,high,high
+eval_0050,三河線の電車が運転を見合わせてる。名鉄三河線で、人身事故が発生したみたい。,2026-05-01 16:24,35.087113,137.157535,traffic_accident,railway,railway_001_00,False,0.6,0.1,0.9,transport:railway_001_00,True,True,True,True,0.0,medium,medium
+eval_0051,「矢作川で冠水！矢作川の上流の雨が止まなくて、川があふれて道路が水でいっぱいになっています。安全に通過できるかどうか気を引きずっています。」,2026-05-01 16:30,35.072173,137.151128,flood,flood,flood_001_00,False,0.6,0.9,0.4,weather:flood_001_00,True,True,True,True,0.0,high,high
+eval_0052,今日も雨でしたが、今日はいい天気だった気がします。,2026-05-01 16:34,35.08468,137.154332,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0053,「三河線が運転見合わせかけてます。名鉄の三河線で人身事故が起こってます。名鉄三河線の運転が見合わせになってます」と書いてみる。,2026-05-01 16:39,35.089155,137.161797,traffic_accident,railway,railway_001_00,False,0.6,0.1,0.9,transport:railway_001_00,True,True,True,True,0.0,medium,medium
+eval_0054,三河線が運転を見合わせてて困りますが、事故の原因は何でしたの？,2026-05-01 16:46,35.090555,137.164252,traffic_accident,railway,railway_001_00,False,0.6,0.1,0.9,transport:railway_001_00,True,True,True,True,0.0,medium,medium
+eval_0055,三河線で人にあたって運転を見合わせてしまいました。急ぐ気持ちで歩いていってた人の後で出てて、後悔しかない気持ちになってしまいました。,2026-05-01 16:53,35.08807,137.163729,,railway,railway_001_00,False,0.6,0.1,0.2,,False,True,True,False,0.0,medium,medium
+eval_0056,「大雨で水溜が出来てて、歩くのが危険そうです…」,2026-05-01 16:30,35.079396,137.141551,flood,flood,flood_002_00,False,0.3,0.7,0.2,weather:flood_002_00,True,True,True,True,0.0,medium,medium
+eval_0057,三河線が運転見合わせだ。三河線は人を踏み切らして事故になるのがおかしいと思って、みんなが不安になっちゃうね。,2026-05-01 16:36,35.089278,137.157889,traffic_accident,railway,railway_001_00,False,0.6,0.1,0.9,transport:railway_001_00,True,True,True,True,0.0,medium,medium
+eval_0058,「大雨が降って、近くに住む先輩の家の前の道路が水が溜まってて、車が通るのには困りそうです」,2026-05-01 16:42,35.079068,137.147959,flood,flood,flood_002_00,False,0.3,0.7,0.2,weather:flood_002_00,True,True,True,True,0.0,medium,medium
+eval_0059,三河線の電車が運転見合わせになっているときを見た。線路の近くで人を踏みつけたという記事が見えた。三河線は名古屋と岡崎を結んでいて、通勤や通学の道具になっている。運転を見合わせることは交通が大変な影響が出る。,2026-05-01 16:47,35.093849,137.161828,railway,railway,railway_001_00,False,0.6,0.1,0.9,transport:railway_001_00,True,True,True,True,0.0,medium,medium
+eval_0060,「大雨で溜まって水が道路を横切っています。車が進まなくて困ります」,2026-05-01 16:54,35.079004,137.149178,flood,flood,flood_002_00,False,0.3,0.7,0.2,weather:flood_002_00,True,True,True,True,0.0,medium,medium
+eval_0061,三河線の電車が運転見合わせになって困りますね。,2026-05-01 16:58,35.089058,137.161007,railway,railway,railway_001_00,False,0.6,0.1,0.9,transport:railway_001_00,True,True,True,True,0.0,medium,medium
+eval_0062,三河線が運転見合わせになってて、名古屋から大野町までの区間が混んでて、観光に来てた私も乗るのをやめた。。,2026-05-01 17:05,35.090438,137.16274,railway,railway,railway_001_00,False,0.6,0.1,0.9,transport:railway_001_00,True,True,True,True,0.0,medium,medium
+eval_0063,「大雨のあと、近所の道路は水が溜まっていて歩くのは大変です」,2026-05-01 16:42,35.082391,137.143488,flood,flood,flood_002_00,False,0.3,0.7,0.2,weather:flood_002_00,True,True,True,True,0.0,medium,medium
+eval_0064,三河線の列車が運転を見合わせてる件のニュースを見て、毎日その線を利用してる人って何人いるんだろうか……,2026-05-01 16:48,35.089169,137.158668,railway,railway,railway_001_00,False,0.6,0.1,0.9,transport:railway_001_00,True,True,True,True,0.0,medium,medium
+eval_0065,「大雨の影響で水が溜まっている道路に注意！住宅地の近くで水が溜まっていて、水車の中を出るように気をつけてください」,2026-05-01 16:54,35.07956,137.148764,flood,flood,flood_002_00,False,0.3,0.7,0.2,weather:flood_002_00,True,True,True,True,0.0,medium,medium
+eval_0066,三河線で人が亡くて運転が止まっています。名古屋から三河へ行く電車が停車しています。,2026-05-01 16:59,35.08922,137.160681,railway,railway,railway_001_00,False,0.6,0.1,0.2,,False,True,True,False,0.0,medium,medium
+eval_0067,「大雨で水溜ができて車が通行不能になってます。安全に家に帰りたいけど、雨が強く降ってて歩くのは難しいです。どうしたらいいかわかりません。」,2026-05-01 17:06,35.081345,137.148357,flood,flood,flood_002_00,False,0.3,0.7,0.2,weather:flood_002_00,True,True,True,True,0.0,medium,medium
+eval_0068,「名鉄三河線が運転見合わせ中！　名古屋市の中濃緑の駅前、人が転んだのが見えた……」,2026-05-01 17:10,35.088055,137.163828,railway,railway,railway_001_00,False,0.6,0.1,0.9,transport:railway_001_00,True,True,True,True,0.0,medium,medium
+eval_0069,三河線で運転を見合わせ中です。車内で人を轢いてしまいました。,2026-05-01 17:17,35.088967,137.162705,,railway,railway_001_00,False,0.6,0.1,0.9,transport:railway_001_00,True,True,True,True,0.0,medium,medium
+eval_0070,今日の夕食は豚丼がかったかったです,2026-05-01 16:56,35.082701,137.15036,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0071,今日の朝食はとても美味しかったです。,2026-05-01 17:01,35.084456,137.153335,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0072,交差点で車が自転車にあたったの悲しい出来事でした。事故のあと、自転車の男性は倒れているままだったのに車の運転手は何も考えずに逃走したのです。,2026-05-01 17:08,35.085147,137.156928,traffic_accident,traffic_accident,traffic_002_00,False,0.3,0.1,0.6,transport:traffic_002_00,True,True,True,True,0.0,medium,medium
+eval_0073,交差点で自転車と車が衝突して、男性が転倒した。男性は頭を打ち付けて倒れ、自転車は車の前部に埋まった。男性は病院に運ばれた。,2026-05-01 17:18,35.086395,137.157369,traffic_accident,traffic_accident,traffic_002_00,False,0.3,0.1,0.6,transport:traffic_002_00,True,True,True,True,0.0,medium,medium
+eval_0074,「交差点で自転車と車が接触した！車の運転手は謝罪の言葉を言ってくれたが、自転車の乗り手は気を失って走り続けていって、車の後ろから飛び去った。。」,2026-05-01 17:28,35.084717,137.160594,,traffic_accident,traffic_002_00,False,0.3,0.1,0.6,transport:traffic_002_00,True,True,True,True,0.0,medium,medium
+eval_0075,「交差点で自転車と車がぶつかりました！ つくりは酷いですが、運転手をおしらせてください」,2026-05-01 17:38,35.08295,137.160186,,traffic_accident,traffic_002_00,False,0.3,0.1,0.6,transport:traffic_002_00,True,True,True,True,0.0,medium,medium
+eval_0076,今日は何度も雨が降りそうですね。,2026-05-01 17:45,35.087063,137.162425,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0077,「交差点で車と自転車がぶつかった！自転車が大けなりにぶつかったらしくて、運転手がおんぶの上から飛び出した！車が停車したので私は自転車の後ろに走って止めた。もう１つ事故にならないように祈る」,2026-05-01 17:24,35.081645,137.156206,traffic_accident,traffic_accident,traffic_002_00,False,0.3,0.1,0.2,,False,True,True,False,0.0,medium,medium
+eval_0078,今日は雨が降り続いています。,2026-05-01 17:29,35.089183,137.152346,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0079,今日はコーヒーを飲みながら本を読んでいたらいいのに,2026-05-01 17:37,35.086216,137.15666,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0080,「交差点で自転車と車が衝突しました。運転手が何も言いません。自転車が大きく壊れました」,2026-05-01 17:42,35.082914,137.160628,traffic_accident,traffic_accident,traffic_002_00,False,0.3,0.1,0.6,transport:traffic_002_00,True,True,True,True,0.0,medium,medium
+eval_0081,豊田駅前で火事が起こって煙が出てる！消防車が来てる。,2026-05-02 14:16,35.083271,137.155773,fire,fire,fire_001_01,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0082,「豊田市駅前のビルに火事が！消防車が何台も出てきて煙があふれててすごい騒ぎです。火事はどんなの事で？」,2026-05-02 14:23,35.087392,137.161753,fire,fire,fire_001_01,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0083,豊田市駅前に大きな火事が起こった。煙が高く上がっています。消防車が急いでやってきたようです。,2026-05-02 14:30,35.08473,137.16118,fire,fire,fire_001_01,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0084,豊田市駅前で火事が起こっていて、煙が上がってます。消防車が来ています,2026-05-02 14:09,35.088126,137.151408,fire,fire,fire_001_01,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0085,今日も雨です。,2026-05-02 14:13,35.084054,137.154708,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0086,「豊田駅前で火事が起こってました。消防車が来ました。煙が大きなものになってしまいました。やばいです…」,2026-05-02 14:20,35.083462,137.157109,fire,fire,fire_001_01,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0087,豊田駅前で火事が出た。消防車が走り出す中、煙があふれてる,2026-05-02 14:27,35.085564,137.157082,fire,fire,fire_001_01,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0088,今日も朝から雨でした。,2026-05-02 14:32,35.08673,137.157992,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0089,今日は晴れがいいですね。,2026-05-02 14:37,35.088919,137.158606,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0090,「豊田駅前で火事が！消防車が集まって煙が高く上がってる」,2026-05-02 14:42,35.084467,137.161911,fire,fire,fire_001_01,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0091,今日は雨が降っていて、日が短くなっています。,2026-05-02 14:18,35.085633,137.155209,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0092,今日も朝から雨で出勤が遅れました。,2026-05-02 14:23,35.088411,137.151862,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0093,「豊田市駅前で火事があがってます。消防車がすばらしいです。煙がうまくでてきません…」,2026-05-02 14:29,35.087745,137.158143,fire,fire,fire_001_01,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0094,「豊田駅前で大火事！消防車が走り出す！見ててください」,2026-05-02 14:36,35.089272,137.157806,fire,fire,fire_001_01,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0095,今日買った本を読んだ。,2026-05-02 14:41,35.084443,137.160095,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0096,豊田駅前で火事が起こったみたいです。消防車が出ています。,2026-05-02 14:47,35.085707,137.158525,fire,fire,fire_001_01,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0097,「豊田市駅前に消防車が何台も出動！駅前のビルに煙が出てる！どうしたの？？」,2026-05-02 14:54,35.087659,137.161682,fire,fire,fire_001_01,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0098,豊田市駅前で火事が起こって煙が出てるです。消防車が急ぐ様子です。,2026-05-02 14:33,35.087662,137.154474,fire,fire,fire_001_01,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0099,今日買った新しいパジャマが着るのを楽しみながら待っています。,2026-05-02 14:43,35.087669,137.155054,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0100,今日の昼食は、うどんに、ごまめととろとろを入れて食べた。,2026-05-02 14:50,35.085258,137.156404,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0101,商業ビルの裏で小火が燃えている！ 煙が出てる！,2026-05-02 15:12,35.087071,137.155193,fire,fire,fire_002_01,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0102,「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」,2026-05-02 15:21,35.088252,137.1555,fire,fire,fire_002_01,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0103,「裏に火事が起こったみたいです。煙がちょっと出てるみたいです」と書きました。,2026-05-02 15:30,35.086276,137.15555,fire,fire,fire_002_01,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0104,裏のビルに火がついたようだ　今朝の作業をしている工事関係者も出てきた　どうなんだって工事の方と言いながら消火器を持った人も出てきた　もう大丈夫そう言って工事の方が火を消した　煙が出たのはもうなくなった,2026-05-02 15:39,35.088424,137.161434,fire,fire,fire_002_01,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0105,商業ビルの裏で小さな火事が起きたようです。少しの煙が上がっています。,2026-05-02 15:20,35.083919,137.151961,fire,fire,fire_002_01,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0106,「商業街の裏で小火が見えました　煙が出てるから注意して下さい」,2026-05-02 15:29,35.08535,137.152929,fire,fire,fire_002_01,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0107,国道155号でトラックと車が激突。トラックのドアが開いたままで、運転手は意識なし。,2026-05-02 15:38,35.07994,137.163783,,traffic_accident,traffic_001_01,False,0.5,0.1,0.9,transport:traffic_001_01,True,True,True,True,0.0,high,high
+eval_0108,国道155号で大型トラックと車が激突！？車の後部が大きな亀裂が入っています…トラックはもうどこかへ走り去ってしまいました。,2026-05-02 15:46,35.084244,137.160631,,traffic_accident,traffic_001_01,False,0.5,0.1,0.9,transport:traffic_001_01,True,True,True,True,0.0,high,high
+eval_0109,国道155号でトラックと乗用車が激突！　１３時ごろ、道中の交差点でトラックが急ブレーキをかけると乗用車が横転、トラックが止まった所にぶつかってしまいました。トラックの運転手はけがれをしていたようです。,2026-05-02 15:54,35.082708,137.162823,,traffic_accident,traffic_001_01,False,0.5,0.1,0.9,transport:traffic_001_01,True,True,True,True,0.0,high,high
+eval_0110,国道155号で大型トラックと乗用車が激突！　トラックは横に転がって、乗用車は窓ガラスが割れて止まった。　運転手はトラックの運転手が重傷、乗用車の運転手はけがけで救助された。　何が起こったのか心配,2026-05-02 16:02,35.077288,137.166121,,traffic_accident,traffic_001_01,False,0.5,0.1,0.2,,False,True,True,False,0.0,high,high
+eval_0111,国道155号で大型トラックと乗用車が激突した！？　トラックの後部に大きな擦り傷が！　乗用車のドアの窓が割れていた　運転手の様子が気になっている,2026-05-02 16:10,35.077706,137.167228,,traffic_accident,traffic_001_01,False,0.5,0.1,0.9,transport:traffic_001_01,True,True,True,True,0.0,high,high
+eval_0112,今日は晴れです。,2026-05-02 15:46,35.083188,137.152701,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0113,国道155号でトラックと車が激突しました。トラックは横転して運転手は負けました。,2026-05-02 15:54,35.08029,137.16074,,traffic_accident,traffic_001_01,False,0.5,0.1,0.9,transport:traffic_001_01,True,True,True,True,0.0,high,high
+eval_0114,国道155号で大型トラックが乗用車に激突　車体が大破片付けあり　車内から出血が見つかる　警視庁の男性によると　大型トラックは左折しなかったらか　現在は車内から遺体が出ている,2026-05-02 16:02,35.082661,137.160168,,traffic_accident,traffic_001_01,False,0.5,0.1,0.9,transport:traffic_001_01,True,True,True,True,0.0,high,high
+eval_0115,国道155号でトラックが乗用車に突っ込まれた。トラックは横に倒れて、トラックの運転手は意識不明です。,2026-05-02 16:10,35.076284,137.160966,,traffic_accident,traffic_001_01,False,0.5,0.1,0.9,transport:traffic_001_01,True,True,True,True,0.0,high,high
+eval_0116,矢作川が増水！周辺の道路も冠水で水が深くなって歩くことが難しいです。,2026-05-02 16:16,35.071586,137.148796,flood,flood,flood_001_01,False,0.6,0.9,0.4,weather:flood_001_01,True,True,True,True,0.0,high,high
+eval_0117,矢作川で冠水！矢作川沿い歩いて帰れなくて困った😭,2026-05-02 16:22,35.073047,137.150589,flood,flood,flood_001_01,False,0.6,0.9,0.4,weather:flood_001_01,True,True,True,True,0.0,high,high
+eval_0118,国道155号でトラックと車が衝突しちゃった！トラックが停まってたらしくて、車の人が重傷か死ぬか！怖いです…,2026-05-02 16:26,35.080455,137.166352,traffic_accident,traffic_accident,traffic_001_01,False,0.5,0.1,0.9,transport:traffic_001_01,True,True,True,True,0.0,high,high
+eval_0119,矢作川水害　みやざかがわすいがい　やつかわ　みやざか　かずかわ　増水　みっすい　みっすい　みっすい　増水　増水　みっすい　みっ水　みっすい　増水　増水　みっすい,2026-05-02 16:04,35.078761,137.144357,flood,flood,flood_001_01,False,0.6,0.9,0.4,weather:flood_001_01,True,True,True,True,0.0,high,high
+eval_0120,矢作川の増水で、県道が冠水！県道１５号線の新橋交差点は、水が一メートル以上もあふれてて、車は通行不能です。,2026-05-02 16:10,35.074542,137.14717,flood,flood,flood_001_01,False,0.6,0.9,0.4,weather:flood_001_01,True,True,True,True,0.0,high,high
+eval_0121,国道155号で大型トラックと乗用車が激突！　トラックの荷物が散乱して、乗用車のドアがびびび！　車内の人がひくひく！　運転手はお腹に手を当てて、もう１度もこの事故は起きてはならないと思いましたが…。,2026-05-02 16:14,35.077085,137.162179,traffic_accident,traffic_accident,traffic_001_01,False,0.5,0.1,0.2,,False,True,True,False,0.0,high,high
+eval_0122,矢作川の水位が大変高くなって、道路も水がかぶって歩くことができなくなって困ってます。,2026-05-02 16:20,35.073441,137.150429,flood,flood,flood_001_01,False,0.6,0.9,0.4,weather:flood_001_01,True,True,True,True,0.0,high,high
+eval_0123,「矢作川増水で周辺道路冠水！西尾車で大混乱！水でわたれた道路がわたわたの！」,2026-05-02 16:26,35.075565,137.15086,flood,flood,flood_001_01,False,0.6,0.9,0.4,weather:flood_001_01,True,True,True,True,0.0,high,high
+eval_0124,矢作川が増水で周辺道路が冠水！中根橋は歩道まで水がたまってます。雨が強いままだとどこまで冠水になっちゃうんだろ。,2026-05-02 16:32,35.078678,137.149764,flood,flood,flood_001_01,False,0.6,0.9,0.4,weather:flood_001_01,True,True,True,True,0.0,high,high
+eval_0125,今日は雨が降っていて少し涼しいです。,2026-05-02 16:36,35.082307,137.15793,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0126,矢作川が増水！周辺の道路が冠水！おかしくない雨です…,2026-05-02 16:14,35.07403,137.145964,flood,flood,flood_001_01,False,0.6,0.9,0.4,weather:flood_001_01,True,True,True,True,0.0,high,high
+eval_0127,矢作川の水位が上がって、周辺の道が水の中です。水面から一歩も出る場所がありません。,2026-05-02 16:20,35.074659,137.146148,flood,flood,flood_001_01,False,0.6,0.9,0.4,weather:flood_001_01,True,True,True,True,0.0,high,high
+eval_0128,「矢作川増水で冠水！周辺道路水浸かり、車で通行不能です。水車や被害報道車が多数見えます。安全な場所に避難してください。雨がやめに止まないので、しばらく水が増える恐れがあります。ご注意ください」,2026-05-02 16:26,35.075107,137.150757,flood,flood,flood_001_01,False,0.6,0.9,0.4,weather:flood_001_01,True,True,True,True,0.0,high,high
+eval_0129,矢作川増水で周辺の道路冠水に困ります。,2026-05-02 16:32,35.07705,137.149574,flood,flood,flood_001_01,False,0.6,0.9,0.4,weather:flood_001_01,True,True,True,True,0.0,high,high
+eval_0130,三河線の電車が運転を見合わせてる。名鉄三河線で、人身事故が発生したみたい。,2026-05-02 16:36,35.087113,137.161135,traffic_accident,railway,railway_001_01,False,0.6,0.1,0.9,transport:railway_001_01,True,True,True,True,0.0,medium,medium
+eval_0131,「矢作川で冠水！矢作川の上流の雨が止まなくて、川があふれて道路が水でいっぱいになっています。安全に通過できるかどうか気を引きずっています。」,2026-05-02 16:42,35.072173,137.154728,flood,flood,flood_001_01,False,0.6,0.9,0.4,weather:flood_001_01,True,True,True,True,0.0,high,high
+eval_0132,今日も雨でしたが、今日はいい天気だった気がします。,2026-05-02 16:46,35.08468,137.157932,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0133,「三河線が運転見合わせかけてます。名鉄の三河線で人身事故が起こってます。名鉄三河線の運転が見合わせになってます」と書いてみる。,2026-05-02 16:23,35.089155,137.156997,traffic_accident,railway,railway_001_01,False,0.6,0.1,0.9,transport:railway_001_01,True,True,True,True,0.0,medium,medium
+eval_0134,三河線が運転を見合わせてて困りますが、事故の原因は何でしたの？,2026-05-02 16:30,35.090555,137.159452,traffic_accident,railway,railway_001_01,False,0.6,0.1,0.9,transport:railway_001_01,True,True,True,True,0.0,medium,medium
+eval_0135,三河線で人にあたって運転を見合わせてしまいました。急ぐ気持ちで歩いていってた人の後で出てて、後悔しかない気持ちになってしまいました。,2026-05-02 16:37,35.08807,137.158929,,railway,railway_001_01,False,0.6,0.1,0.9,transport:railway_001_01,True,True,True,True,0.0,medium,medium
+eval_0136,「大雨で水溜が出来てて、歩くのが危険そうです…」,2026-05-02 16:42,35.079396,137.145151,flood,flood,flood_002_01,False,0.3,0.7,0.2,weather:flood_002_01,True,True,True,True,0.0,medium,medium
+eval_0137,三河線が運転見合わせだ。三河線は人を踏み切らして事故になるのがおかしいと思って、みんなが不安になっちゃうね。,2026-05-02 16:48,35.089278,137.161489,traffic_accident,railway,railway_001_01,False,0.6,0.1,0.9,transport:railway_001_01,True,True,True,True,0.0,medium,medium
+eval_0138,「大雨が降って、近くに住む先輩の家の前の道路が水が溜まってて、車が通るのには困りそうです」,2026-05-02 16:54,35.079068,137.151559,flood,flood,flood_002_01,False,0.3,0.7,0.2,weather:flood_002_01,True,True,True,True,0.0,medium,medium
+eval_0139,三河線の電車が運転見合わせになっているときを見た。線路の近くで人を踏みつけたという記事が見えた。三河線は名古屋と岡崎を結んでいて、通勤や通学の道具になっている。運転を見合わせることは交通が大変な影響が出る。,2026-05-02 16:59,35.093849,137.165428,railway,railway,railway_001_01,False,0.6,0.1,0.9,transport:railway_001_01,True,True,True,True,0.0,medium,medium
+eval_0140,「大雨で溜まって水が道路を横切っています。車が進まなくて困ります」,2026-05-02 16:38,35.079004,137.144378,flood,flood,flood_002_01,False,0.3,0.7,0.2,weather:flood_002_01,True,True,True,True,0.0,medium,medium
+eval_0141,三河線の電車が運転見合わせになって困りますね。,2026-05-02 16:42,35.089058,137.156207,railway,railway,railway_001_01,False,0.6,0.1,0.9,transport:railway_001_01,True,True,True,True,0.0,medium,medium
+eval_0142,三河線が運転見合わせになってて、名古屋から大野町までの区間が混んでて、観光に来てた私も乗るのをやめた。。,2026-05-02 16:49,35.090438,137.15794,railway,railway,railway_001_01,False,0.6,0.1,0.9,transport:railway_001_01,True,True,True,True,0.0,medium,medium
+eval_0143,「大雨のあと、近所の道路は水が溜まっていて歩くのは大変です」,2026-05-02 16:54,35.082391,137.147088,flood,flood,flood_002_01,False,0.3,0.2,0.2,,False,True,True,False,0.0,medium,medium
+eval_0144,三河線の列車が運転を見合わせてる件のニュースを見て、毎日その線を利用してる人って何人いるんだろうか……,2026-05-02 17:00,35.089169,137.162268,railway,railway,railway_001_01,False,0.6,0.1,0.9,transport:railway_001_01,True,True,True,True,0.0,medium,medium
+eval_0145,「大雨の影響で水が溜まっている道路に注意！住宅地の近くで水が溜まっていて、水車の中を出るように気をつけてください」,2026-05-02 17:06,35.07956,137.152364,flood,flood,flood_002_01,False,0.3,0.7,0.2,weather:flood_002_01,True,True,True,True,0.0,medium,medium
+eval_0146,三河線で人が亡くて運転が止まっています。名古屋から三河へ行く電車が停車しています。,2026-05-02 17:11,35.08922,137.164281,railway,railway,railway_001_01,False,0.6,0.1,0.9,transport:railway_001_01,True,True,True,True,0.0,medium,medium
+eval_0147,「大雨で水溜ができて車が通行不能になってます。安全に家に帰りたいけど、雨が強く降ってて歩くのは難しいです。どうしたらいいかわかりません。」,2026-05-02 16:50,35.081345,137.143557,flood,flood,flood_002_01,False,0.3,0.7,0.2,weather:flood_002_01,True,True,True,True,0.0,medium,medium
+eval_0148,「名鉄三河線が運転見合わせ中！　名古屋市の中濃緑の駅前、人が転んだのが見えた……」,2026-05-02 16:54,35.088055,137.159028,railway,railway,railway_001_01,False,0.6,0.1,0.9,transport:railway_001_01,True,True,True,True,0.0,medium,medium
+eval_0149,三河線で運転を見合わせ中です。車内で人を轢いてしまいました。,2026-05-02 17:01,35.088967,137.157905,,railway,railway_001_01,False,0.6,0.1,0.9,transport:railway_001_01,True,True,True,True,0.0,medium,medium
+eval_0150,今日の夕食は豚丼がかったかったです,2026-05-02 17:08,35.082701,137.15396,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0151,今日の朝食はとても美味しかったです。,2026-05-02 17:13,35.084456,137.156935,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0152,交差点で車が自転車にあたったの悲しい出来事でした。事故のあと、自転車の男性は倒れているままだったのに車の運転手は何も考えずに逃走したのです。,2026-05-02 17:20,35.085147,137.160528,traffic_accident,traffic_accident,traffic_002_01,False,0.3,0.1,0.6,transport:traffic_002_01,True,True,True,True,0.0,medium,medium
+eval_0153,交差点で自転車と車が衝突して、男性が転倒した。男性は頭を打ち付けて倒れ、自転車は車の前部に埋まった。男性は病院に運ばれた。,2026-05-02 17:30,35.086395,137.160969,traffic_accident,traffic_accident,traffic_002_01,False,0.3,0.1,0.6,transport:traffic_002_01,True,True,True,True,0.0,medium,medium
+eval_0154,「交差点で自転車と車が接触した！車の運転手は謝罪の言葉を言ってくれたが、自転車の乗り手は気を失って走り続けていって、車の後ろから飛び去った。。」,2026-05-02 17:12,35.084717,137.155794,,traffic_accident,traffic_002_01,False,0.3,0.1,0.2,,False,True,True,False,0.0,medium,medium
+eval_0155,「交差点で自転車と車がぶつかりました！ つくりは酷いですが、運転手をおしらせてください」,2026-05-02 17:22,35.08295,137.155386,,traffic_accident,traffic_002_01,False,0.3,0.1,0.6,transport:traffic_002_01,True,True,True,True,0.0,medium,medium
+eval_0156,今日は何度も雨が降りそうですね。,2026-05-02 17:29,35.087063,137.157625,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0157,「交差点で車と自転車がぶつかった！自転車が大けなりにぶつかったらしくて、運転手がおんぶの上から飛び出した！車が停車したので私は自転車の後ろに走って止めた。もう１つ事故にならないように祈る」,2026-05-02 17:36,35.081645,137.159806,traffic_accident,traffic_accident,traffic_002_01,False,0.3,0.1,0.6,transport:traffic_002_01,True,True,True,True,0.0,medium,medium
+eval_0158,今日は雨が降り続いています。,2026-05-02 17:41,35.089183,137.155946,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0159,今日はコーヒーを飲みながら本を読んでいたらいいのに,2026-05-02 17:49,35.086216,137.16026,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0160,「交差点で自転車と車が衝突しました。運転手が何も言いません。自転車が大きく壊れました」,2026-05-02 17:54,35.082914,137.164228,traffic_accident,traffic_accident,traffic_002_01,False,0.3,0.1,0.6,transport:traffic_002_01,True,True,True,True,0.0,medium,medium
+eval_0161,豊田駅前で火事が起こって煙が出てる！消防車が来てる。,2026-05-03 14:00,35.083271,137.150973,fire,fire,fire_001_02,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0162,「豊田市駅前のビルに火事が！消防車が何台も出てきて煙があふれててすごい騒ぎです。火事はどんなの事で？」,2026-05-03 14:07,35.087392,137.156953,fire,fire,fire_001_02,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0163,豊田市駅前に大きな火事が起こった。煙が高く上がっています。消防車が急いでやってきたようです。,2026-05-03 14:14,35.08473,137.15638,fire,fire,fire_001_02,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0164,豊田市駅前で火事が起こっていて、煙が上がってます。消防車が来ています,2026-05-03 14:21,35.088126,137.155008,fire,fire,fire_001_02,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0165,今日も雨です。,2026-05-03 14:25,35.084054,137.158308,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0166,「豊田駅前で火事が起こってました。消防車が来ました。煙が大きなものになってしまいました。やばいです…」,2026-05-03 14:32,35.083462,137.160709,fire,fire,fire_001_02,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0167,豊田駅前で火事が出た。消防車が走り出す中、煙があふれてる,2026-05-03 14:39,35.085564,137.160682,fire,fire,fire_001_02,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0168,今日も朝から雨でした。,2026-05-03 14:16,35.08673,137.153192,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0169,今日は晴れがいいですね。,2026-05-03 14:21,35.088919,137.153806,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0170,「豊田駅前で火事が！消防車が集まって煙が高く上がってる」,2026-05-03 14:26,35.084467,137.157111,fire,fire,fire_001_02,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0171,今日は雨が降っていて、日が短くなっています。,2026-05-03 14:30,35.085633,137.158809,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0172,今日も朝から雨で出勤が遅れました。,2026-05-03 14:35,35.088411,137.155462,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0173,「豊田市駅前で火事があがってます。消防車がすばらしいです。煙がうまくでてきません…」,2026-05-03 14:41,35.087745,137.161743,fire,fire,fire_001_02,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0174,「豊田駅前で大火事！消防車が走り出す！見ててください」,2026-05-03 14:48,35.089272,137.161406,fire,fire,fire_001_02,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0175,今日買った本を読んだ。,2026-05-03 14:25,35.084443,137.155295,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0176,豊田駅前で火事が起こったみたいです。消防車が出ています。,2026-05-03 14:31,35.085707,137.153725,fire,fire,fire_001_02,False,0.6,0.2,0.2,,False,False,False,False,,high,high
+eval_0177,「豊田市駅前に消防車が何台も出動！駅前のビルに煙が出てる！どうしたの？？」,2026-05-03 14:38,35.087659,137.156882,fire,fire,fire_001_02,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0178,豊田市駅前で火事が起こって煙が出てるです。消防車が急ぐ様子です。,2026-05-03 14:45,35.087662,137.158074,fire,fire,fire_001_02,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0179,今日買った新しいパジャマが着るのを楽しみながら待っています。,2026-05-03 14:55,35.087669,137.158654,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0180,今日の昼食は、うどんに、ごまめととろとろを入れて食べた。,2026-05-03 15:02,35.085258,137.160004,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0181,商業ビルの裏で小火が燃えている！ 煙が出てる！,2026-05-03 15:24,35.087071,137.158793,fire,fire,fire_002_02,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0182,「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」,2026-05-03 15:05,35.088252,137.1507,fire,fire,fire_002_02,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0183,「裏に火事が起こったみたいです。煙がちょっと出てるみたいです」と書きました。,2026-05-03 15:14,35.086276,137.15075,fire,fire,fire_002_02,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0184,裏のビルに火がついたようだ　今朝の作業をしている工事関係者も出てきた　どうなんだって工事の方と言いながら消火器を持った人も出てきた　もう大丈夫そう言って工事の方が火を消した　煙が出たのはもうなくなった,2026-05-03 15:23,35.088424,137.156634,fire,fire,fire_002_02,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0185,商業ビルの裏で小さな火事が起きたようです。少しの煙が上がっています。,2026-05-03 15:32,35.083919,137.155561,fire,fire,fire_002_02,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0186,「商業街の裏で小火が見えました　煙が出てるから注意して下さい」,2026-05-03 15:41,35.08535,137.156529,fire,fire,fire_002_02,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0187,国道155号でトラックと車が激突。トラックのドアが開いたままで、運転手は意識なし。,2026-05-03 15:50,35.07994,137.167383,,traffic_accident,traffic_001_02,False,0.5,0.1,0.2,,False,True,True,False,0.0,high,high
+eval_0188,国道155号で大型トラックと車が激突！？車の後部が大きな亀裂が入っています…トラックはもうどこかへ走り去ってしまいました。,2026-05-03 15:58,35.084244,137.164231,,traffic_accident,traffic_001_02,False,0.5,0.1,0.9,transport:traffic_001_02,True,True,True,True,0.0,high,high
+eval_0189,国道155号でトラックと乗用車が激突！　１３時ごろ、道中の交差点でトラックが急ブレーキをかけると乗用車が横転、トラックが止まった所にぶつかってしまいました。トラックの運転手はけがれをしていたようです。,2026-05-03 15:38,35.082708,137.158023,,traffic_accident,traffic_001_02,False,0.5,0.1,0.9,transport:traffic_001_02,True,True,True,True,0.0,high,high
+eval_0190,国道155号で大型トラックと乗用車が激突！　トラックは横に転がって、乗用車は窓ガラスが割れて止まった。　運転手はトラックの運転手が重傷、乗用車の運転手はけがけで救助された。　何が起こったのか心配,2026-05-03 15:46,35.077288,137.161321,,traffic_accident,traffic_001_02,False,0.5,0.1,0.9,transport:traffic_001_02,True,True,True,True,0.0,high,high
+eval_0191,国道155号で大型トラックと乗用車が激突した！？　トラックの後部に大きな擦り傷が！　乗用車のドアの窓が割れていた　運転手の様子が気になっている,2026-05-03 15:54,35.077706,137.162428,,traffic_accident,traffic_001_02,False,0.5,0.1,0.9,transport:traffic_001_02,True,True,True,True,0.0,high,high
+eval_0192,今日は晴れです。,2026-05-03 15:58,35.083188,137.156301,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0193,国道155号でトラックと車が激突しました。トラックは横転して運転手は負けました。,2026-05-03 16:06,35.08029,137.16434,,traffic_accident,traffic_001_02,False,0.5,0.1,0.9,transport:traffic_001_02,True,True,True,True,0.0,high,high
+eval_0194,国道155号で大型トラックが乗用車に激突　車体が大破片付けあり　車内から出血が見つかる　警視庁の男性によると　大型トラックは左折しなかったらか　現在は車内から遺体が出ている,2026-05-03 16:14,35.082661,137.163768,,traffic_accident,traffic_001_02,False,0.5,0.1,0.9,transport:traffic_001_02,True,True,True,True,0.0,high,high
+eval_0195,国道155号でトラックが乗用車に突っ込まれた。トラックは横に倒れて、トラックの運転手は意識不明です。,2026-05-03 16:22,35.076284,137.164566,,traffic_accident,traffic_001_02,False,0.5,0.1,0.9,transport:traffic_001_02,True,True,True,True,0.0,high,high
+eval_0196,矢作川が増水！周辺の道路も冠水で水が深くなって歩くことが難しいです。,2026-05-03 16:00,35.071586,137.143996,flood,flood,flood_001_02,False,0.6,0.9,0.4,weather:flood_001_02,True,True,True,True,0.0,high,high
+eval_0197,矢作川で冠水！矢作川沿い歩いて帰れなくて困った😭,2026-05-03 16:06,35.073047,137.145789,flood,flood,flood_001_02,False,0.6,0.9,0.4,weather:flood_001_02,True,True,True,True,0.0,high,high
+eval_0198,国道155号でトラックと車が衝突しちゃった！トラックが停まってたらしくて、車の人が重傷か死ぬか！怖いです…,2026-05-03 16:10,35.080455,137.161552,traffic_accident,traffic_accident,traffic_001_02,False,0.5,0.1,0.2,,False,True,True,False,0.0,high,high
+eval_0199,矢作川水害　みやざかがわすいがい　やつかわ　みやざか　かずかわ　増水　みっすい　みっすい　みっすい　増水　増水　みっすい　みっ水　みっすい　増水　増水　みっすい,2026-05-03 16:16,35.078761,137.147957,flood,flood,flood_001_02,False,0.6,0.9,0.4,weather:flood_001_02,True,True,True,True,0.0,high,high
+eval_0200,矢作川の増水で、県道が冠水！県道１５号線の新橋交差点は、水が一メートル以上もあふれてて、車は通行不能です。,2026-05-03 16:22,35.074542,137.15077,flood,flood,flood_001_02,False,0.6,0.9,0.4,weather:flood_001_02,True,True,True,True,0.0,high,high
+eval_0201,国道155号で大型トラックと乗用車が激突！　トラックの荷物が散乱して、乗用車のドアがびびび！　車内の人がひくひく！　運転手はお腹に手を当てて、もう１度もこの事故は起きてはならないと思いましたが…。,2026-05-03 16:26,35.077085,137.165779,traffic_accident,traffic_accident,traffic_001_02,False,0.5,0.1,0.9,transport:traffic_001_02,True,True,True,True,0.0,high,high
+eval_0202,矢作川の水位が大変高くなって、道路も水がかぶって歩くことができなくなって困ってます。,2026-05-03 16:32,35.073441,137.154029,flood,flood,flood_001_02,False,0.6,0.9,0.4,weather:flood_001_02,True,True,True,True,0.0,high,high
+eval_0203,「矢作川増水で周辺道路冠水！西尾車で大混乱！水でわたれた道路がわたわたの！」,2026-05-03 16:10,35.075565,137.14606,flood,flood,flood_001_02,False,0.6,0.9,0.4,weather:flood_001_02,True,True,True,True,0.0,high,high
+eval_0204,矢作川が増水で周辺道路が冠水！中根橋は歩道まで水がたまってます。雨が強いままだとどこまで冠水になっちゃうんだろ。,2026-05-03 16:16,35.078678,137.144964,flood,flood,flood_001_02,False,0.6,0.9,0.4,weather:flood_001_02,True,True,True,True,0.0,high,high
+eval_0205,今日は雨が降っていて少し涼しいです。,2026-05-03 16:20,35.082307,137.15313,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0206,矢作川が増水！周辺の道路が冠水！おかしくない雨です…,2026-05-03 16:26,35.07403,137.149564,flood,flood,flood_001_02,False,0.6,0.9,0.4,weather:flood_001_02,True,True,True,True,0.0,high,high
+eval_0207,矢作川の水位が上がって、周辺の道が水の中です。水面から一歩も出る場所がありません。,2026-05-03 16:32,35.074659,137.149748,flood,flood,flood_001_02,False,0.6,0.9,0.4,weather:flood_001_02,True,True,True,True,0.0,high,high
+eval_0208,「矢作川増水で冠水！周辺道路水浸かり、車で通行不能です。水車や被害報道車が多数見えます。安全な場所に避難してください。雨がやめに止まないので、しばらく水が増える恐れがあります。ご注意ください」,2026-05-03 16:38,35.075107,137.154357,flood,flood,flood_001_02,False,0.6,0.9,0.4,weather:flood_001_02,True,True,True,True,0.0,high,high
+eval_0209,矢作川増水で周辺の道路冠水に困ります。,2026-05-03 16:44,35.07705,137.153174,flood,flood,flood_001_02,False,0.6,0.2,0.2,,False,True,True,False,0.0,high,high
+eval_0210,三河線の電車が運転を見合わせてる。名鉄三河線で、人身事故が発生したみたい。,2026-05-03 16:20,35.087113,137.156335,traffic_accident,railway,railway_001_02,False,0.6,0.1,0.9,transport:railway_001_02,True,True,True,True,0.0,medium,medium
+eval_0211,「矢作川で冠水！矢作川の上流の雨が止まなくて、川があふれて道路が水でいっぱいになっています。安全に通過できるかどうか気を引きずっています。」,2026-05-03 16:26,35.072173,137.149928,flood,flood,flood_001_02,False,0.6,0.9,0.4,weather:flood_001_02,True,True,True,True,0.0,high,high
+eval_0212,今日も雨でしたが、今日はいい天気だった気がします。,2026-05-03 16:30,35.08468,137.153132,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0213,「三河線が運転見合わせかけてます。名鉄の三河線で人身事故が起こってます。名鉄三河線の運転が見合わせになってます」と書いてみる。,2026-05-03 16:35,35.089155,137.160597,traffic_accident,railway,railway_001_02,False,0.6,0.1,0.9,transport:railway_001_02,True,True,True,True,0.0,medium,medium
+eval_0214,三河線が運転を見合わせてて困りますが、事故の原因は何でしたの？,2026-05-03 16:42,35.090555,137.163052,traffic_accident,railway,railway_001_02,False,0.6,0.1,0.9,transport:railway_001_02,True,True,True,True,0.0,medium,medium
+eval_0215,三河線で人にあたって運転を見合わせてしまいました。急ぐ気持ちで歩いていってた人の後で出てて、後悔しかない気持ちになってしまいました。,2026-05-03 16:49,35.08807,137.162529,,railway,railway_001_02,False,0.6,0.1,0.9,transport:railway_001_02,True,True,True,True,0.0,medium,medium
+eval_0216,「大雨で水溜が出来てて、歩くのが危険そうです…」,2026-05-03 16:54,35.079396,137.148751,flood,flood,flood_002_02,False,0.3,0.7,0.2,weather:flood_002_02,True,True,True,True,0.0,medium,medium
+eval_0217,三河線が運転見合わせだ。三河線は人を踏み切らして事故になるのがおかしいと思って、みんなが不安になっちゃうね。,2026-05-03 16:32,35.089278,137.156689,traffic_accident,railway,railway_001_02,False,0.6,0.1,0.9,transport:railway_001_02,True,True,True,True,0.0,medium,medium
+eval_0218,「大雨が降って、近くに住む先輩の家の前の道路が水が溜まってて、車が通るのには困りそうです」,2026-05-03 16:38,35.079068,137.146759,flood,flood,flood_002_02,False,0.3,0.7,0.2,weather:flood_002_02,True,True,True,True,0.0,medium,medium
+eval_0219,三河線の電車が運転見合わせになっているときを見た。線路の近くで人を踏みつけたという記事が見えた。三河線は名古屋と岡崎を結んでいて、通勤や通学の道具になっている。運転を見合わせることは交通が大変な影響が出る。,2026-05-03 16:43,35.093849,137.160628,railway,railway,railway_001_02,False,0.6,0.1,0.9,transport:railway_001_02,True,True,True,True,0.0,medium,medium
+eval_0220,「大雨で溜まって水が道路を横切っています。車が進まなくて困ります」,2026-05-03 16:50,35.079004,137.147978,flood,flood,flood_002_02,False,0.3,0.2,0.2,,False,True,True,False,0.0,medium,medium
+eval_0221,三河線の電車が運転見合わせになって困りますね。,2026-05-03 16:54,35.089058,137.159807,railway,railway,railway_001_02,False,0.6,0.1,0.9,transport:railway_001_02,True,True,True,True,0.0,medium,medium
+eval_0222,三河線が運転見合わせになってて、名古屋から大野町までの区間が混んでて、観光に来てた私も乗るのをやめた。。,2026-05-03 17:01,35.090438,137.16154,railway,railway,railway_001_02,False,0.6,0.1,0.9,transport:railway_001_02,True,True,True,True,0.0,medium,medium
+eval_0223,「大雨のあと、近所の道路は水が溜まっていて歩くのは大変です」,2026-05-03 17:06,35.082391,137.150688,flood,flood,flood_002_02,False,0.3,0.7,0.2,weather:flood_002_02,True,True,True,True,0.0,medium,medium
+eval_0224,三河線の列車が運転を見合わせてる件のニュースを見て、毎日その線を利用してる人って何人いるんだろうか……,2026-05-03 16:44,35.089169,137.157468,railway,railway,railway_001_02,False,0.6,0.1,0.9,transport:railway_001_02,True,True,True,True,0.0,medium,medium
+eval_0225,「大雨の影響で水が溜まっている道路に注意！住宅地の近くで水が溜まっていて、水車の中を出るように気をつけてください」,2026-05-03 16:50,35.07956,137.147564,flood,flood,flood_002_02,False,0.3,0.7,0.2,weather:flood_002_02,True,True,True,True,0.0,medium,medium
+eval_0226,三河線で人が亡くて運転が止まっています。名古屋から三河へ行く電車が停車しています。,2026-05-03 16:55,35.08922,137.159481,railway,railway,railway_001_02,False,0.6,0.1,0.9,transport:railway_001_02,True,True,True,True,0.0,medium,medium
+eval_0227,「大雨で水溜ができて車が通行不能になってます。安全に家に帰りたいけど、雨が強く降ってて歩くのは難しいです。どうしたらいいかわかりません。」,2026-05-03 17:02,35.081345,137.147157,flood,flood,flood_002_02,False,0.3,0.7,0.2,weather:flood_002_02,True,True,True,True,0.0,medium,medium
+eval_0228,「名鉄三河線が運転見合わせ中！　名古屋市の中濃緑の駅前、人が転んだのが見えた……」,2026-05-03 17:06,35.088055,137.162628,railway,railway,railway_001_02,False,0.6,0.1,0.9,transport:railway_001_02,True,True,True,True,0.0,medium,medium
+eval_0229,三河線で運転を見合わせ中です。車内で人を轢いてしまいました。,2026-05-03 17:13,35.088967,137.161505,,railway,railway_001_02,False,0.6,0.1,0.9,transport:railway_001_02,True,True,True,True,0.0,medium,medium
+eval_0230,今日の夕食は豚丼がかったかったです,2026-05-03 17:20,35.082701,137.15756,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0231,今日の朝食はとても美味しかったです。,2026-05-03 16:57,35.084456,137.152135,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0232,交差点で車が自転車にあたったの悲しい出来事でした。事故のあと、自転車の男性は倒れているままだったのに車の運転手は何も考えずに逃走したのです。,2026-05-03 17:04,35.085147,137.155728,traffic_accident,traffic_accident,traffic_002_02,False,0.3,0.1,0.6,transport:traffic_002_02,True,True,True,True,0.0,medium,medium
+eval_0233,交差点で自転車と車が衝突して、男性が転倒した。男性は頭を打ち付けて倒れ、自転車は車の前部に埋まった。男性は病院に運ばれた。,2026-05-03 17:14,35.086395,137.156169,traffic_accident,traffic_accident,traffic_002_02,False,0.3,0.1,0.6,transport:traffic_002_02,True,True,True,True,0.0,medium,medium
+eval_0234,「交差点で自転車と車が接触した！車の運転手は謝罪の言葉を言ってくれたが、自転車の乗り手は気を失って走り続けていって、車の後ろから飛び去った。。」,2026-05-03 17:24,35.084717,137.159394,,traffic_accident,traffic_002_02,False,0.3,0.1,0.6,transport:traffic_002_02,True,True,True,True,0.0,medium,medium
+eval_0235,「交差点で自転車と車がぶつかりました！ つくりは酷いですが、運転手をおしらせてください」,2026-05-03 17:34,35.08295,137.158986,,traffic_accident,traffic_002_02,False,0.3,0.1,0.6,transport:traffic_002_02,True,True,True,True,0.0,medium,medium
+eval_0236,今日は何度も雨が降りそうですね。,2026-05-03 17:41,35.087063,137.161225,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0237,「交差点で車と自転車がぶつかった！自転車が大けなりにぶつかったらしくて、運転手がおんぶの上から飛び出した！車が停車したので私は自転車の後ろに走って止めた。もう１つ事故にならないように祈る」,2026-05-03 17:48,35.081645,137.163406,traffic_accident,traffic_accident,traffic_002_02,False,0.3,0.1,0.6,transport:traffic_002_02,True,True,True,True,0.0,medium,medium
+eval_0238,今日は雨が降り続いています。,2026-05-03 17:25,35.089183,137.151146,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0239,今日はコーヒーを飲みながら本を読んでいたらいいのに,2026-05-03 17:33,35.086216,137.15546,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0240,「交差点で自転車と車が衝突しました。運転手が何も言いません。自転車が大きく壊れました」,2026-05-03 17:38,35.082914,137.159428,traffic_accident,traffic_accident,traffic_002_02,False,0.3,0.1,0.6,transport:traffic_002_02,True,True,True,True,0.0,medium,medium
+eval_0241,豊田駅前で火事が起こって煙が出てる！消防車が来てる。,2026-05-04 14:12,35.083271,137.154573,fire,fire,fire_001_03,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0242,「豊田市駅前のビルに火事が！消防車が何台も出てきて煙があふれててすごい騒ぎです。火事はどんなの事で？」,2026-05-04 14:19,35.087392,137.160553,fire,fire,fire_001_03,False,0.6,0.2,0.2,,False,False,False,False,,high,high
+eval_0243,豊田市駅前に大きな火事が起こった。煙が高く上がっています。消防車が急いでやってきたようです。,2026-05-04 14:26,35.08473,137.15998,fire,fire,fire_001_03,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0244,豊田市駅前で火事が起こっていて、煙が上がってます。消防車が来ています,2026-05-04 14:33,35.088126,137.158608,fire,fire,fire_001_03,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0245,今日も雨です。,2026-05-04 14:09,35.084054,137.153508,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0246,「豊田駅前で火事が起こってました。消防車が来ました。煙が大きなものになってしまいました。やばいです…」,2026-05-04 14:16,35.083462,137.155909,fire,fire,fire_001_03,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0247,豊田駅前で火事が出た。消防車が走り出す中、煙があふれてる,2026-05-04 14:23,35.085564,137.155882,fire,fire,fire_001_03,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0248,今日も朝から雨でした。,2026-05-04 14:28,35.08673,137.156792,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0249,今日は晴れがいいですね。,2026-05-04 14:33,35.088919,137.157406,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0250,「豊田駅前で火事が！消防車が集まって煙が高く上がってる」,2026-05-04 14:38,35.084467,137.160711,fire,fire,fire_001_03,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0251,今日は雨が降っていて、日が短くなっています。,2026-05-04 14:42,35.085633,137.162409,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0252,今日も朝から雨で出勤が遅れました。,2026-05-04 14:19,35.088411,137.150662,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0253,「豊田市駅前で火事があがってます。消防車がすばらしいです。煙がうまくでてきません…」,2026-05-04 14:25,35.087745,137.156943,fire,fire,fire_001_03,False,0.6,0.2,0.2,,False,False,False,False,,high,high
+eval_0254,「豊田駅前で大火事！消防車が走り出す！見ててください」,2026-05-04 14:32,35.089272,137.156606,fire,fire,fire_001_03,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0255,今日買った本を読んだ。,2026-05-04 14:37,35.084443,137.158895,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0256,豊田駅前で火事が起こったみたいです。消防車が出ています。,2026-05-04 14:43,35.085707,137.157325,fire,fire,fire_001_03,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0257,「豊田市駅前に消防車が何台も出動！駅前のビルに煙が出てる！どうしたの？？」,2026-05-04 14:50,35.087659,137.160482,fire,fire,fire_001_03,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0258,豊田市駅前で火事が起こって煙が出てるです。消防車が急ぐ様子です。,2026-05-04 14:57,35.087662,137.161674,fire,fire,fire_001_03,False,0.6,0.2,0.5,,False,False,False,False,,high,high
+eval_0259,今日買った新しいパジャマが着るのを楽しみながら待っています。,2026-05-04 14:39,35.087669,137.153854,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0260,今日の昼食は、うどんに、ごまめととろとろを入れて食べた。,2026-05-04 14:46,35.085258,137.155204,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0261,商業ビルの裏で小火が燃えている！ 煙が出てる！,2026-05-04 15:08,35.087071,137.153993,fire,fire,fire_002_03,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0262,「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」,2026-05-04 15:17,35.088252,137.1543,fire,fire,fire_002_03,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0263,「裏に火事が起こったみたいです。煙がちょっと出てるみたいです」と書きました。,2026-05-04 15:26,35.086276,137.15435,fire,fire,fire_002_03,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0264,裏のビルに火がついたようだ　今朝の作業をしている工事関係者も出てきた　どうなんだって工事の方と言いながら消火器を持った人も出てきた　もう大丈夫そう言って工事の方が火を消した　煙が出たのはもうなくなった,2026-05-04 15:35,35.088424,137.160234,fire,fire,fire_002_03,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0265,商業ビルの裏で小さな火事が起きたようです。少しの煙が上がっています。,2026-05-04 15:44,35.083919,137.159161,fire,fire,fire_002_03,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0266,「商業街の裏で小火が見えました　煙が出てるから注意して下さい」,2026-05-04 15:25,35.08535,137.151729,fire,fire,fire_002_03,False,0.3,0.1,0.2,,False,False,False,False,,medium,medium
+eval_0267,国道155号でトラックと車が激突。トラックのドアが開いたままで、運転手は意識なし。,2026-05-04 15:34,35.07994,137.162583,,traffic_accident,traffic_001_03,False,0.5,0.1,0.9,transport:traffic_001_03,True,True,True,True,0.0,high,high
+eval_0268,国道155号で大型トラックと車が激突！？車の後部が大きな亀裂が入っています…トラックはもうどこかへ走り去ってしまいました。,2026-05-04 15:42,35.084244,137.159431,,traffic_accident,traffic_001_03,False,0.5,0.1,0.9,transport:traffic_001_03,True,True,True,True,0.0,high,high
+eval_0269,国道155号でトラックと乗用車が激突！　１３時ごろ、道中の交差点でトラックが急ブレーキをかけると乗用車が横転、トラックが止まった所にぶつかってしまいました。トラックの運転手はけがれをしていたようです。,2026-05-04 15:50,35.082708,137.161623,,traffic_accident,traffic_001_03,False,0.5,0.1,0.9,transport:traffic_001_03,True,True,True,True,0.0,high,high
+eval_0270,国道155号で大型トラックと乗用車が激突！　トラックは横に転がって、乗用車は窓ガラスが割れて止まった。　運転手はトラックの運転手が重傷、乗用車の運転手はけがけで救助された。　何が起こったのか心配,2026-05-04 15:58,35.077288,137.164921,,traffic_accident,traffic_001_03,False,0.5,0.1,0.9,transport:traffic_001_03,True,True,True,True,0.0,high,high
+eval_0271,国道155号で大型トラックと乗用車が激突した！？　トラックの後部に大きな擦り傷が！　乗用車のドアの窓が割れていた　運転手の様子が気になっている,2026-05-04 16:06,35.077706,137.166028,,traffic_accident,traffic_001_03,False,0.5,0.1,0.9,transport:traffic_001_03,True,True,True,True,0.0,high,high
+eval_0272,今日は晴れです。,2026-05-04 16:10,35.083188,137.159901,,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0273,国道155号でトラックと車が激突しました。トラックは横転して運転手は負けました。,2026-05-04 15:50,35.08029,137.15954,,traffic_accident,traffic_001_03,False,0.5,0.1,0.9,transport:traffic_001_03,True,True,True,True,0.0,high,high
+eval_0274,国道155号で大型トラックが乗用車に激突　車体が大破片付けあり　車内から出血が見つかる　警視庁の男性によると　大型トラックは左折しなかったらか　現在は車内から遺体が出ている,2026-05-04 15:58,35.082661,137.158968,,traffic_accident,traffic_001_03,False,0.5,0.1,0.9,transport:traffic_001_03,True,True,True,True,0.0,high,high
+eval_0275,国道155号でトラックが乗用車に突っ込まれた。トラックは横に倒れて、トラックの運転手は意識不明です。,2026-05-04 16:06,35.076284,137.159766,,traffic_accident,traffic_001_03,False,0.5,0.1,0.2,,False,True,True,False,0.0,high,high
+eval_0276,矢作川が増水！周辺の道路も冠水で水が深くなって歩くことが難しいです。,2026-05-04 16:12,35.071586,137.147596,flood,flood,flood_001_03,False,0.6,0.9,0.4,weather:flood_001_03,True,True,True,True,0.0,high,high
+eval_0277,矢作川で冠水！矢作川沿い歩いて帰れなくて困った😭,2026-05-04 16:18,35.073047,137.149389,flood,flood,flood_001_03,False,0.6,0.9,0.4,weather:flood_001_03,True,True,True,True,0.0,high,high
+eval_0278,国道155号でトラックと車が衝突しちゃった！トラックが停まってたらしくて、車の人が重傷か死ぬか！怖いです…,2026-05-04 16:22,35.080455,137.165152,traffic_accident,traffic_accident,traffic_001_03,False,0.5,0.1,0.9,transport:traffic_001_03,True,True,True,True,0.0,high,high
+eval_0279,矢作川水害　みやざかがわすいがい　やつかわ　みやざか　かずかわ　増水　みっすい　みっすい　みっすい　増水　増水　みっすい　みっ水　みっすい　増水　増水　みっすい,2026-05-04 16:28,35.078761,137.151557,flood,flood,flood_001_03,False,0.6,0.9,0.4,weather:flood_001_03,True,True,True,True,0.0,high,high
+eval_0280,矢作川の増水で、県道が冠水！県道１５号線の新橋交差点は、水が一メートル以上もあふれてて、車は通行不能です。,2026-05-04 16:06,35.074542,137.14597,flood,flood,flood_001_03,False,0.6,0.9,0.4,weather:flood_001_03,True,True,True,True,0.0,high,high
+eval_0281,国道155号で大型トラックと乗用車が激突！　トラックの荷物が散乱して、乗用車のドアがびびび！　車内の人がひくひく！　運転手はお腹に手を当てて、もう１度もこの事故は起きてはならないと思いましたが…。,2026-05-04 16:10,35.077085,137.160979,traffic_accident,traffic_accident,traffic_001_03,False,0.5,0.1,0.9,transport:traffic_001_03,True,True,True,True,0.0,high,high
+eval_0282,矢作川の水位が大変高くなって、道路も水がかぶって歩くことができなくなって困ってます。,2026-05-04 16:16,35.073441,137.149229,flood,flood,flood_001_03,False,0.6,0.9,0.4,weather:flood_001_03,True,True,True,True,0.0,high,high
+eval_0283,「矢作川増水で周辺道路冠水！西尾車で大混乱！水でわたれた道路がわたわたの！」,2026-05-04 16:22,35.075565,137.14966,flood,flood,flood_001_03,False,0.6,0.9,0.4,weather:flood_001_03,True,True,True,True,0.0,high,high
+eval_0284,矢作川が増水で周辺道路が冠水！中根橋は歩道まで水がたまってます。雨が強いままだとどこまで冠水になっちゃうんだろ。,2026-05-04 16:28,35.078678,137.148564,flood,flood,flood_001_03,False,0.6,0.9,0.4,weather:flood_001_03,True,True,True,True,0.0,high,high
+eval_0285,今日は雨が降っていて少し涼しいです。,2026-05-04 16:32,35.082307,137.15673,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0286,矢作川が増水！周辺の道路が冠水！おかしくない雨です…,2026-05-04 16:38,35.07403,137.153164,flood,flood,flood_001_03,False,0.6,0.2,0.2,,False,True,True,False,0.0,high,high
+eval_0287,矢作川の水位が上がって、周辺の道が水の中です。水面から一歩も出る場所がありません。,2026-05-04 16:16,35.074659,137.144948,flood,flood,flood_001_03,False,0.6,0.9,0.4,weather:flood_001_03,True,True,True,True,0.0,high,high
+eval_0288,「矢作川増水で冠水！周辺道路水浸かり、車で通行不能です。水車や被害報道車が多数見えます。安全な場所に避難してください。雨がやめに止まないので、しばらく水が増える恐れがあります。ご注意ください」,2026-05-04 16:22,35.075107,137.149557,flood,flood,flood_001_03,False,0.6,0.9,0.4,weather:flood_001_03,True,True,True,True,0.0,high,high
+eval_0289,矢作川増水で周辺の道路冠水に困ります。,2026-05-04 16:28,35.07705,137.148374,flood,flood,flood_001_03,False,0.6,0.9,0.4,weather:flood_001_03,True,True,True,True,0.0,high,high
+eval_0290,三河線の電車が運転を見合わせてる。名鉄三河線で、人身事故が発生したみたい。,2026-05-04 16:32,35.087113,137.159935,traffic_accident,railway,railway_001_03,False,0.6,0.1,0.9,transport:railway_001_03,True,True,True,True,0.0,medium,medium
+eval_0291,「矢作川で冠水！矢作川の上流の雨が止まなくて、川があふれて道路が水でいっぱいになっています。安全に通過できるかどうか気を引きずっています。」,2026-05-04 16:38,35.072173,137.153528,flood,flood,flood_001_03,False,0.6,0.9,0.4,weather:flood_001_03,True,True,True,True,0.0,high,high
+eval_0292,今日も雨でしたが、今日はいい天気だった気がします。,2026-05-04 16:42,35.08468,137.156732,flood,noise,noise,True,0.8,0.0,0.0,,False,False,False,False,,low,low
+eval_0293,「三河線が運転見合わせかけてます。名鉄の三河線で人身事故が起こってます。名鉄三河線の運転が見合わせになってます」と書いてみる。,2026-05-04 16:47,35.089155,137.164197,traffic_accident,railway,railway_001_03,False,0.6,0.1,0.9,transport:railway_001_03,True,True,True,True,0.0,medium,medium
+eval_0294,三河線が運転を見合わせてて困りますが、事故の原因は何でしたの？,2026-05-04 16:26,35.090555,137.158252,traffic_accident,railway,railway_001_03,False,0.6,0.1,0.9,transport:railway_001_03,True,True,True,True,0.0,medium,medium
+eval_0295,三河線で人にあたって運転を見合わせてしまいました。急ぐ気持ちで歩いていってた人の後で出てて、後悔しかない気持ちになってしまいました。,2026-05-04 16:33,35.08807,137.157729,,railway,railway_001_03,False,0.6,0.1,0.9,transport:railway_001_03,True,True,True,True,0.0,medium,medium
+eval_0296,「大雨で水溜が出来てて、歩くのが危険そうです…」,2026-05-04 16:38,35.079396,137.143951,flood,flood,flood_002_03,False,0.3,0.7,0.2,weather:flood_002_03,True,True,True,True,0.0,medium,medium
+eval_0297,三河線が運転見合わせだ。三河線は人を踏み切らして事故になるのがおかしいと思って、みんなが不安になっちゃうね。,2026-05-04 16:44,35.089278,137.160289,traffic_accident,railway,railway_001_03,False,0.6,0.1,0.2,,False,True,True,False,0.0,medium,medium
+eval_0298,「大雨が降って、近くに住む先輩の家の前の道路が水が溜まってて、車が通るのには困りそうです」,2026-05-04 16:50,35.079068,137.150359,flood,flood,flood_002_03,False,0.3,0.7,0.2,weather:flood_002_03,True,True,True,True,0.0,medium,medium
+eval_0299,三河線の電車が運転見合わせになっているときを見た。線路の近くで人を踏みつけたという記事が見えた。三河線は名古屋と岡崎を結んでいて、通勤や通学の道具になっている。運転を見合わせることは交通が大変な影響が出る。,2026-05-04 16:55,35.093849,137.164228,railway,railway,railway_001_03,False,0.6,0.1,0.9,transport:railway_001_03,True,True,True,True,0.0,medium,medium
+eval_0300,「大雨で溜まって水が道路を横切っています。車が進まなくて困ります」,2026-05-04 17:02,35.079004,137.151578,flood,flood,flood_002_03,False,0.3,0.7,0.2,weather:flood_002_03,True,True,True,True,0.0,medium,medium

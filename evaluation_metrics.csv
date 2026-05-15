@@ -1,0 +1,5 @@
+mode,label,precision,recall,f1,macro_f1,tp,fp,fn
+keyword,A キーワード方式,1.0,0.602,0.751,0.314,145,0,96
+sns_only,B SNSのみ,0.615,0.199,0.301,0.069,48,30,193
+sns_weather,C SNS+気象,0.789,0.465,0.585,0.14,112,30,129
+multi_source,D SNS+気象+交通,0.863,0.784,0.822,0.445,189,30,52

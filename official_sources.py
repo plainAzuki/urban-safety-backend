@@ -3,6 +3,7 @@
 import os
 import xml.etree.ElementTree as ET
 from datetime import datetime
+from typing import Optional
 
 import httpx
 
@@ -34,6 +35,20 @@ OFFICIAL_SOURCE_CATALOG = [
     },
 ]
 
+# 気象庁XMLなどの公式発表を0〜1のseverityへ変換する固定表。
+# 卒論では、この表を「公式信号を数値化する根拠」としてそのまま説明できる。
+SEVERITY_CONVERSION_TABLE = [
+    {"keyword": "解除", "severity": 0.0, "status": "normal", "reason": "公式にリスク低下が示されたため"},
+    {"keyword": "特別警報", "severity": 1.0, "status": "warning", "reason": "最大級の危険度として扱うため"},
+    {"keyword": "警報", "severity": 0.7, "status": "warning", "reason": "避難・移動判断に強く影響するため"},
+    {"keyword": "土砂災害", "severity": 0.8, "status": "warning", "reason": "短時間で被害が拡大しやすいため"},
+    {"keyword": "記録的短時間大雨", "severity": 0.8, "status": "warning", "reason": "局地的な浸水危険が高いため"},
+    {"keyword": "竜巻", "severity": 0.7, "status": "watch", "reason": "発生可能性が高く時間依存性が強いため"},
+    {"keyword": "注意報", "severity": 0.3, "status": "watch", "reason": "低〜中リスクの注意信号として扱うため"},
+    {"keyword": "大雨", "severity": 0.6, "status": "watch", "reason": "浸水・河川増水と関係しやすいため"},
+    {"keyword": "洪水", "severity": 0.6, "status": "watch", "reason": "河川・低地リスクと関係しやすいため"},
+]
+
 
 def now_text() -> str:
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -48,42 +63,42 @@ def source_catalog() -> list[dict]:
     return OFFICIAL_SOURCE_CATALOG
 
 
+def severity_conversion_table() -> list[dict]:
+    """公式発表の種類とseverityの対応表を返す。"""
+    return SEVERITY_CONVERSION_TABLE
+
+
+def severity_from_conversion_table(text: str) -> Optional[tuple[float, str]]:
+    for rule in SEVERITY_CONVERSION_TABLE:
+        if rule["keyword"] in text:
+            return rule["severity"], rule["status"]
+    return None
+
+
 def jma_severity_from_title(title: str) -> float:
     """気象庁XMLのタイトルから、アプリ共通の0〜1スコアへ粗く変換する。"""
     if title in {"気象特別警報・警報・注意報", "気象警報・注意報（Ｈ２７）"}:
         return 0.65
-    if "特別警報" in title:
-        return 1.0
-    if "警報" in title:
-        return 0.85
-    if "土砂災害" in title or "記録的短時間大雨" in title:
-        return 0.8
-    if "竜巻" in title:
-        return 0.75
-    if "注意報" in title:
-        return 0.65
-    if "大雨" in title or "洪水" in title:
-        return 0.7
+    converted = severity_from_conversion_table(title)
+    if converted:
+        return converted[0]
     return 0.4
 
 
 def jma_severity_from_text(text: str, fallback_title: str) -> float:
     """本文が取れる場合は、電文種別名より本文の注意・警報表現を優先する。"""
-    if "解除" in text:
-        return 0.2
-    if "特別警報" in text:
-        return 1.0
-    if "警報" in text:
-        return 0.85
-    if "注意報" in text or "注意してください" in text:
-        return 0.65
+    converted = severity_from_conversion_table(text)
+    if converted:
+        return converted[0]
+    if "注意してください" in text:
+        return 0.3
     return jma_severity_from_title(fallback_title)
 
 
 def jma_status_from_severity(severity: float) -> str:
-    if severity >= 0.85:
+    if severity >= 0.7:
         return "warning"
-    if severity >= 0.6:
+    if severity >= 0.3:
         return "watch"
     return "info"
 

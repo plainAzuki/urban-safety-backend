@@ -14,10 +14,12 @@ def main():
     assert dashboard["top_risk"]["confidence_label"]
     assert dashboard["top_risk"]["action_plan"]
     assert "live_official_count" in dashboard["data_summary"]
+    assert dashboard["evaluation_summary"]["results"]
 
     overview = get_system_overview()
     assert overview["database"]["event_count"] > 0
     assert overview["pipeline"]
+    assert overview["evaluation"]["dataset_size"] > 0
 
     result = asyncio.run(analyze_event(dashboard["top_risk"]["id"]))
     assert result["analysis"]

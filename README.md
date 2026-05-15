@@ -25,6 +25,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 - `POST /official/live/sync`: 取得した公式ライブ情報を地域単位の観測値としてDBへ保存します。
 - `GET /official/live`: DBに保存済みの公式ライブ情報を返します。
 - `GET /system/overview`: 卒業制作の説明に使えるデータフローと設定概要を返します。
+- `GET /evaluation/summary`: SNSのみ、多ソース融合ありなどの比較実験結果を返します。
 - `GET /health`: DBとAI接続状態を確認します。
 - `DELETE /analysis/cache`: 保存済みAI分析を削除します。`event_id` 指定も可能です。
 
@@ -53,6 +54,7 @@ export OPENAI_MODEL=gpt-4.1-mini
 ## 簡易確認
 
 ```bash
+python evaluation.py
 python smoke_test.py
 python api_contract_test.py
 ```
@@ -67,3 +69,16 @@ Ollama が起動していない場合でも、詳細分析は `rule-based-fallba
 - `action_plan`: LLMに依存しない短い推奨行動を返します。
 - `risk_timeline`: 過去時間帯ごとのリスク集中を返します。
 - `ai_analyses`: 詳細分析を保存し、同一モデルでは再生成を避けます。
+
+## 研究評価
+
+`evaluation.py` は、報告書で指摘された「SNSのみ vs 多ソース融合あり」の比較を行うための評価スクリプトです。
+
+- `evaluation_dataset.csv`: `post_id`, `event_id`, `is_noise`, `event_type`, `official_match`, `ground_truth_risk` などを固定した評価用データです。
+- `evaluation_results.json`: A キーワード方式、B SNSのみ、C SNS+気象、D SNS+気象+交通の Precision / Recall / F1 を保存します。
+- `evaluation_metrics.csv`: 表計算ソフトで棒グラフを作りやすい条件別指標です。
+- `evaluation_report.md`: 次回報告・卒論下書きに貼り付けやすい評価レポートです。
+- LLMは検知精度に混ぜず、構造化データによるリスク判定だけを評価します。
+- 予測時には正解ラベルの `is_noise` を使わず、投稿本文から推定した `detected_event_type` を使います。
+- 公式信号の紐づけは、投稿前後3時間、半径5km以内、イベント種別の整合性という3条件で判定します。
+- DBSCAN相当の時空間クラスタリングにより、Duplicate Reduction Rate と Cluster Purity も算出します。

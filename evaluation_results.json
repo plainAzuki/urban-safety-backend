@@ -1,0 +1,368 @@
+{
+  "dataset_size": 300,
+  "event_count": 27,
+  "noise_count": 59,
+  "official_match_count": 153,
+  "class_counts": {
+    "high": 136,
+    "low": 59,
+    "medium": 105
+  },
+  "results": [
+    {
+      "mode": "keyword",
+      "label": "A キーワード方式",
+      "precision": 1.0,
+      "recall": 0.602,
+      "f1": 0.751,
+      "tp": 145,
+      "fp": 0,
+      "fn": 96,
+      "macro_f1": 0.314
+    },
+    {
+      "mode": "sns_only",
+      "label": "B SNSのみ",
+      "precision": 0.615,
+      "recall": 0.199,
+      "f1": 0.301,
+      "tp": 48,
+      "fp": 30,
+      "fn": 193,
+      "macro_f1": 0.069
+    },
+    {
+      "mode": "sns_weather",
+      "label": "C SNS+気象",
+      "precision": 0.789,
+      "recall": 0.465,
+      "f1": 0.585,
+      "tp": 112,
+      "fp": 30,
+      "fn": 129,
+      "macro_f1": 0.14
+    },
+    {
+      "mode": "multi_source",
+      "label": "D SNS+気象+交通",
+      "precision": 0.863,
+      "recall": 0.784,
+      "f1": 0.822,
+      "tp": 189,
+      "fp": 30,
+      "fn": 52,
+      "macro_f1": 0.445
+    }
+  ],
+  "best_mode": {
+    "mode": "multi_source",
+    "label": "D SNS+気象+交通",
+    "precision": 0.863,
+    "recall": 0.784,
+    "f1": 0.822,
+    "tp": 189,
+    "fp": 30,
+    "fn": 52,
+    "macro_f1": 0.445
+  },
+  "failure_examples": {
+    "false_positives": [
+      {
+        "post_id": "eval_0005",
+        "text": "今日も雨です。",
+        "truth": "low",
+        "predicted": "medium"
+      },
+      {
+        "post_id": "eval_0008",
+        "text": "今日も朝から雨でした。",
+        "truth": "low",
+        "predicted": "medium"
+      },
+      {
+        "post_id": "eval_0011",
+        "text": "今日は雨が降っていて、日が短くなっています。",
+        "truth": "low",
+        "predicted": "medium"
+      }
+    ],
+    "false_negatives": [
+      {
+        "post_id": "eval_0021",
+        "text": "商業ビルの裏で小火が燃えている！ 煙が出てる！",
+        "truth": "medium",
+        "predicted": "low"
+      },
+      {
+        "post_id": "eval_0022",
+        "text": "「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」",
+        "truth": "medium",
+        "predicted": "low"
+      },
+      {
+        "post_id": "eval_0023",
+        "text": "「裏に火事が起こったみたいです。煙がちょっと出てるみたいです」と書きました。",
+        "truth": "medium",
+        "predicted": "low"
+      }
+    ]
+  },
+  "failure_examples_by_mode": {
+    "keyword": {
+      "false_positives": [],
+      "false_negatives": [
+        {
+          "post_id": "eval_0021",
+          "text": "商業ビルの裏で小火が燃えている！ 煙が出てる！",
+          "truth": "medium",
+          "predicted": "low"
+        },
+        {
+          "post_id": "eval_0022",
+          "text": "「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」",
+          "truth": "medium",
+          "predicted": "low"
+        },
+        {
+          "post_id": "eval_0024",
+          "text": "裏のビルに火がついたようだ　今朝の作業をしている工事関係者も出てきた　どうなんだって工事の方と言いながら消火器を持った人も出てきた　もう大丈夫そう言って工事の方が火を消した　煙が出たのはもうなくなった",
+          "truth": "medium",
+          "predicted": "low"
+        }
+      ]
+    },
+    "sns_only": {
+      "false_positives": [
+        {
+          "post_id": "eval_0005",
+          "text": "今日も雨です。",
+          "truth": "low",
+          "predicted": "medium"
+        },
+        {
+          "post_id": "eval_0008",
+          "text": "今日も朝から雨でした。",
+          "truth": "low",
+          "predicted": "medium"
+        },
+        {
+          "post_id": "eval_0011",
+          "text": "今日は雨が降っていて、日が短くなっています。",
+          "truth": "low",
+          "predicted": "medium"
+        }
+      ],
+      "false_negatives": [
+        {
+          "post_id": "eval_0021",
+          "text": "商業ビルの裏で小火が燃えている！ 煙が出てる！",
+          "truth": "medium",
+          "predicted": "low"
+        },
+        {
+          "post_id": "eval_0022",
+          "text": "「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」",
+          "truth": "medium",
+          "predicted": "low"
+        },
+        {
+          "post_id": "eval_0023",
+          "text": "「裏に火事が起こったみたいです。煙がちょっと出てるみたいです」と書きました。",
+          "truth": "medium",
+          "predicted": "low"
+        }
+      ]
+    },
+    "sns_weather": {
+      "false_positives": [
+        {
+          "post_id": "eval_0005",
+          "text": "今日も雨です。",
+          "truth": "low",
+          "predicted": "medium"
+        },
+        {
+          "post_id": "eval_0008",
+          "text": "今日も朝から雨でした。",
+          "truth": "low",
+          "predicted": "medium"
+        },
+        {
+          "post_id": "eval_0011",
+          "text": "今日は雨が降っていて、日が短くなっています。",
+          "truth": "low",
+          "predicted": "medium"
+        }
+      ],
+      "false_negatives": [
+        {
+          "post_id": "eval_0021",
+          "text": "商業ビルの裏で小火が燃えている！ 煙が出てる！",
+          "truth": "medium",
+          "predicted": "low"
+        },
+        {
+          "post_id": "eval_0022",
+          "text": "「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」",
+          "truth": "medium",
+          "predicted": "low"
+        },
+        {
+          "post_id": "eval_0023",
+          "text": "「裏に火事が起こったみたいです。煙がちょっと出てるみたいです」と書きました。",
+          "truth": "medium",
+          "predicted": "low"
+        }
+      ]
+    },
+    "multi_source": {
+      "false_positives": [
+        {
+          "post_id": "eval_0005",
+          "text": "今日も雨です。",
+          "truth": "low",
+          "predicted": "medium"
+        },
+        {
+          "post_id": "eval_0008",
+          "text": "今日も朝から雨でした。",
+          "truth": "low",
+          "predicted": "medium"
+        },
+        {
+          "post_id": "eval_0011",
+          "text": "今日は雨が降っていて、日が短くなっています。",
+          "truth": "low",
+          "predicted": "medium"
+        }
+      ],
+      "false_negatives": [
+        {
+          "post_id": "eval_0021",
+          "text": "商業ビルの裏で小火が燃えている！ 煙が出てる！",
+          "truth": "medium",
+          "predicted": "low"
+        },
+        {
+          "post_id": "eval_0022",
+          "text": "「商業ビルの裏で小火が見えた。煙が出ているが、警備員が何もしない」",
+          "truth": "medium",
+          "predicted": "low"
+        },
+        {
+          "post_id": "eval_0023",
+          "text": "「裏に火事が起こったみたいです。煙がちょっと出てるみたいです」と書きました。",
+          "truth": "medium",
+          "predicted": "low"
+        }
+      ]
+    }
+  },
+  "clustering": {
+    "cluster_count": 32,
+    "post_count": 241,
+    "alert_count_after_clustering": 51,
+    "duplicate_reduction_rate": 0.788,
+    "cluster_purity": 0.924,
+    "params": {
+      "eps_km": 0.35,
+      "eps_minutes": 25,
+      "min_samples": 2
+    }
+  },
+  "official_link_rule": {
+    "time_window_hours": 3,
+    "distance_window_km": 5.0,
+    "type_rule": "浸水は気象信号、交通事故・鉄道障害は交通信号と対応させる"
+  },
+  "weight_design": [
+    {
+      "category": "fire",
+      "label": "火災",
+      "sns": 0.8,
+      "weather": 0.1,
+      "transport": 0.1,
+      "reason": "火災は現場の煙・消防車などがSNSに早く投稿されやすいため、SNS寄与を高くする。"
+    },
+    {
+      "category": "flood",
+      "label": "浸水・洪水",
+      "sns": 0.5,
+      "weather": 0.4,
+      "transport": 0.1,
+      "reason": "浸水は降雨・河川情報との関係が強いため、気象寄与を高くする。"
+    },
+    {
+      "category": "traffic_accident",
+      "label": "交通事故",
+      "sns": 0.6,
+      "weather": 0.1,
+      "transport": 0.3,
+      "reason": "事故は現場投稿と道路交通情報の両方が重要なため、SNSと交通寄与を組み合わせる。"
+    },
+    {
+      "category": "railway",
+      "label": "鉄道障害",
+      "sns": 0.5,
+      "weather": 0.1,
+      "transport": 0.4,
+      "reason": "鉄道障害は公式運行情報との対応が重要なため、交通寄与を高くする。"
+    }
+  ],
+  "severity_conversion_table": [
+    {
+      "keyword": "解除",
+      "severity": 0.0,
+      "status": "normal",
+      "reason": "公式にリスク低下が示されたため"
+    },
+    {
+      "keyword": "特別警報",
+      "severity": 1.0,
+      "status": "warning",
+      "reason": "最大級の危険度として扱うため"
+    },
+    {
+      "keyword": "警報",
+      "severity": 0.7,
+      "status": "warning",
+      "reason": "避難・移動判断に強く影響するため"
+    },
+    {
+      "keyword": "土砂災害",
+      "severity": 0.8,
+      "status": "warning",
+      "reason": "短時間で被害が拡大しやすいため"
+    },
+    {
+      "keyword": "記録的短時間大雨",
+      "severity": 0.8,
+      "status": "warning",
+      "reason": "局地的な浸水危険が高いため"
+    },
+    {
+      "keyword": "竜巻",
+      "severity": 0.7,
+      "status": "watch",
+      "reason": "発生可能性が高く時間依存性が強いため"
+    },
+    {
+      "keyword": "注意報",
+      "severity": 0.3,
+      "status": "watch",
+      "reason": "低〜中リスクの注意信号として扱うため"
+    },
+    {
+      "keyword": "大雨",
+      "severity": 0.6,
+      "status": "watch",
+      "reason": "浸水・河川増水と関係しやすいため"
+    },
+    {
+      "keyword": "洪水",
+      "severity": 0.6,
+      "status": "watch",
+      "reason": "河川・低地リスクと関係しやすいため"
+    }
+  ]
+}
