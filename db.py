@@ -19,12 +19,16 @@ CREATE TABLE IF NOT EXISTS official_area_observations (
     id          TEXT PRIMARY KEY,
     source      TEXT NOT NULL,
     source_url  TEXT,
+    category    TEXT DEFAULT 'その他',
     area        TEXT NOT NULL,
     label       TEXT NOT NULL,
+    display_label TEXT,
     severity    REAL NOT NULL,
     status      TEXT,
     detail      TEXT,
     observed_at TEXT,
+    updated_at  TEXT,
+    is_simulated INTEGER DEFAULT 0,
     created_at  TEXT DEFAULT (datetime('now', 'localtime'))
 );
 CREATE INDEX IF NOT EXISTS idx_area_observed_at ON official_area_observations(observed_at);
@@ -74,6 +78,12 @@ def ensure_tables(conn):
         + CREATE_ANSWER_VERIFICATIONS_TABLE
     )
     ensure_column(conn, "official_area_observations", "source_url", "TEXT")
+    ensure_column(conn, "official_area_observations", "category", "TEXT DEFAULT 'その他'")
+    ensure_column(conn, "official_area_observations", "display_label", "TEXT")
+    ensure_column(conn, "official_area_observations", "updated_at", "TEXT")
+    ensure_column(conn, "official_area_observations", "is_simulated", "INTEGER DEFAULT 0")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_area_category_status ON official_area_observations(category, status)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_area_simulated ON official_area_observations(is_simulated)")
     conn.commit()
 
 
@@ -86,7 +96,13 @@ def ensure_column(conn, table: str, column: str, definition: str) -> None:
 
 def official_signal_row_to_dict(row) -> dict:
     """API返却用にRowをdictへ変換する。"""
-    return dict(row)
+    data = dict(row)
+    data["is_simulated"] = bool(data.get("is_simulated"))
+    if not data.get("display_label"):
+        data["display_label"] = data.get("label")
+    if not data.get("updated_at"):
+        data["updated_at"] = data.get("created_at") or data.get("observed_at")
+    return data
 
 
 def parse_timestamp(value: Optional[str]) -> Optional[datetime]:
@@ -104,41 +120,52 @@ def parse_timestamp(value: Optional[str]) -> Optional[datetime]:
         return None
 
 
-def load_area_official_signals(conn, limit: int = 20) -> list[dict]:
-    """Evidence DB から新しい順に公式情報を取得する。"""
+def load_area_official_signals(conn, limit: int = 20, include_simulated: bool = False) -> list[dict]:
+    """Evidence DB から新しい順に都市安全情報を取得する。"""
     sources = official_source_names()
     placeholders = ",".join("?" for _ in sources)
     cur = conn.cursor()
     cur.execute(f"""
-        SELECT source, source_url, area, label, severity, status, detail, observed_at, created_at
+        SELECT
+            source, source_url, category, area, label, display_label, severity, status,
+            detail, observed_at, updated_at, is_simulated, created_at
         FROM official_area_observations
-        WHERE source IN ({placeholders})
+        WHERE (source IN ({placeholders}) OR ? = 1)
+          AND (? = 1 OR is_simulated = 0)
         ORDER BY observed_at DESC, created_at DESC
         LIMIT ?
-    """, (*sources, limit))
+    """, (*sources, int(include_simulated), int(include_simulated), limit))
     return [official_signal_row_to_dict(row) for row in cur.fetchall()]
 
 
-def load_latest_official_signals_by_source(conn, limit_per_source: int = 1) -> list[dict]:
-    """情報源ごとの最新公式情報を取得する。ダッシュボード用。"""
+def load_latest_official_signals_by_source(
+    conn,
+    limit_per_source: int = 1,
+    include_simulated: bool = False,
+) -> list[dict]:
+    """情報源ごとの最新都市安全情報を取得する。ダッシュボード用。"""
     sources = official_source_names()
     placeholders = ",".join("?" for _ in sources)
     cur = conn.cursor()
     cur.execute(f"""
-        SELECT source, source_url, area, label, severity, status, detail, observed_at, created_at
+        SELECT
+            source, source_url, category, area, label, display_label, severity, status,
+            detail, observed_at, updated_at, is_simulated, created_at
         FROM (
             SELECT
-                source, source_url, area, label, severity, status, detail, observed_at, created_at,
+                source, source_url, category, area, label, display_label, severity, status,
+                detail, observed_at, updated_at, is_simulated, created_at,
                 ROW_NUMBER() OVER (
                     PARTITION BY source
                     ORDER BY datetime(created_at) DESC, observed_at DESC, id DESC
                 ) AS row_number
             FROM official_area_observations
-            WHERE source IN ({placeholders})
+            WHERE (source IN ({placeholders}) OR ? = 1)
+              AND (? = 1 OR is_simulated = 0)
         )
         WHERE row_number <= ?
         ORDER BY source ASC, datetime(created_at) DESC, observed_at DESC
-    """, (*sources, limit_per_source))
+    """, (*sources, int(include_simulated), int(include_simulated), limit_per_source))
     return [official_signal_row_to_dict(row) for row in cur.fetchall()]
 
 
@@ -146,7 +173,9 @@ def load_official_history_for_source(conn, source: str, limit: int = OFFICIAL_HI
     """指定した情報源の履歴を取得する。詳細モーダル用。"""
     cur = conn.cursor()
     cur.execute("""
-        SELECT source, source_url, area, label, severity, status, detail, observed_at, created_at
+        SELECT
+            source, source_url, category, area, label, display_label, severity, status,
+            detail, observed_at, updated_at, is_simulated, created_at
         FROM official_area_observations
         WHERE source = ?
         ORDER BY datetime(created_at) DESC, observed_at DESC, id DESC
@@ -182,27 +211,85 @@ def save_area_official_signals(conn, signals: list[dict]) -> int:
     cur = conn.cursor()
     for index, signal in enumerate(signals):
         detail_key = (signal.get("detail") or "").split(" / ")[-1]
-        observation_id = f"{signal['source']}:{signal['area']}:{signal.get('observed_at')}:{detail_key or index}"
+        simulated_prefix = "sim" if signal.get("is_simulated") else "official"
+        observation_id = signal.get("id") or f"{simulated_prefix}:{signal['source']}:{signal['area']}:{signal.get('observed_at')}:{detail_key or index}"
         cur.execute("""
             INSERT OR REPLACE INTO official_area_observations
-                (id, source, source_url, area, label, severity, status, detail, observed_at)
+                (
+                    id, source, source_url, category, area, label, display_label, severity,
+                    status, detail, observed_at, updated_at, is_simulated
+                )
             VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             observation_id,
             signal["source"],
             signal.get("source_url"),
+            signal.get("category") or "その他",
             signal["area"],
             signal["label"],
+            signal.get("display_label") or signal["label"],
             signal["severity"],
             signal.get("status"),
             signal.get("detail"),
             signal.get("observed_at"),
+            signal.get("updated_at") or signal.get("observed_at"),
+            1 if signal.get("is_simulated") else 0,
         ))
         inserted += 1
     conn.commit()
     trim_official_history(conn)
     return inserted
+
+
+def load_safety_events(
+    conn,
+    limit: int = 50,
+    include_simulated: bool = False,
+    category: Optional[str] = None,
+    area: Optional[str] = None,
+    min_severity: Optional[float] = None,
+) -> list[dict]:
+    """研究用APIで使う統一都市安全情報一覧を取得する。"""
+    conditions = ["(? = 1 OR is_simulated = 0)"]
+    params: list[object] = [int(include_simulated)]
+    if category:
+        conditions.append("category = ?")
+        params.append(category)
+    if area:
+        conditions.append("area LIKE ?")
+        params.append(f"%{area}%")
+    if min_severity is not None:
+        conditions.append("severity >= ?")
+        params.append(min_severity)
+    params.append(limit)
+    cur = conn.cursor()
+    cur.execute(f"""
+        SELECT
+            source, source_url, category, area, label, display_label, severity, status,
+            detail, observed_at, updated_at, is_simulated, created_at
+        FROM official_area_observations
+        WHERE {" AND ".join(conditions)}
+        ORDER BY severity DESC, datetime(updated_at) DESC, datetime(created_at) DESC
+        LIMIT ?
+    """, params)
+    return [official_signal_row_to_dict(row) for row in cur.fetchall()]
+
+
+def delete_simulated_events(conn) -> int:
+    """研究検証用の模擬イベントだけを削除する。"""
+    cur = conn.cursor()
+    cur.execute("DELETE FROM official_area_observations WHERE is_simulated = 1")
+    deleted = cur.rowcount
+    conn.commit()
+    return deleted
+
+
+def count_simulated_events(conn) -> int:
+    """保存済み模擬イベント件数を返す。"""
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM official_area_observations WHERE is_simulated = 1")
+    return int(cur.fetchone()[0])
 
 
 def official_refresh_due(conn) -> tuple[bool, Optional[str]]:

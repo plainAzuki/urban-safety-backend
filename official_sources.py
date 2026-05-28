@@ -133,6 +133,7 @@ OFFICIAL_STATUS_CATALOG = [
     {"status": "情報", "description": "公式情報の入口や告知など、個別の危険・障害を示さない状態。"},
     {"status": "注意", "description": "注意報や注意喚起など、利用者が状況確認すべき状態。"},
     {"status": "警戒", "description": "警報・特別警報・災害危険など、強い警戒が必要な状態。"},
+    {"status": "危険", "description": "避難指示・通行止め・複数障害など、研究検証上の高リスク状態。"},
     {"status": "運休", "description": "鉄道などの運転見合わせ・運休。"},
     {"status": "支障", "description": "道路規制・渋滞・遅延など、移動に支障がある状態。"},
     {"status": "取得不可", "description": "取得失敗または判読不能。"},

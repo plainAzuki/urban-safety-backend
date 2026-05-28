@@ -13,6 +13,8 @@ def main():
         ("/system/overview", "pipeline"),
         ("/official/sources", "sources"),
         ("/official/live", "observations"),
+        ("/safety/events?include_simulated=true", "events"),
+        ("/safety/simulated-events/scenarios", "scenarios"),
     ]
     for path, key in checks:
         resp = client.get(path)

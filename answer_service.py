@@ -1,4 +1,8 @@
-"""ユーザー質問への回答生成と Verifier Agent の判定。"""
+"""ユーザー質問への都市安全情報要約。
+
+Verifier Agent は本研究の主題から外し、保存済みの公的情報・模擬イベントを
+明示的な参照情報として返す方針にしている。
+"""
 
 import json
 from datetime import datetime
@@ -7,7 +11,7 @@ from typing import Optional
 
 from ai_client import call_ai
 from config import AI_GENERATOR_MODEL, AI_PROVIDER, AI_VERIFIER_MODEL
-from db import get_db, load_area_official_signals, load_latest_official_signals_by_source, save_answer_verification
+from db import get_db, load_area_official_signals, load_safety_events, save_answer_verification
 from json_utils import extract_json_object
 from official_service import run_official_sync
 from prompts import build_answer_prompt, build_verifier_prompt
@@ -92,7 +96,6 @@ def build_ask_report(
     ai_error: Optional[str],
 ) -> str:
     """1回の質問に対する研究・デバッグ用レポートを作る。"""
-    verifier_passed = verification.get("verdict") == "PASS"
     shown = visible_answer is not None
     return f"""# Ask Report
 
@@ -100,7 +103,7 @@ generated_at: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 answer_id: {answer_id}
 provider: {provider}
 generator_model: {generator_model}
-verifier_model: {AI_VERIFIER_MODEL}
+research_policy: Evidence DB に基づく要約。Verifier Agent は研究主題から除外。
 
 ## Question
 
@@ -112,30 +115,29 @@ verifier_model: {AI_VERIFIER_MODEL}
 
 ## Result Summary
 
-- verifier_passed: {verifier_passed}
-- verdict: {verification.get("verdict")}
+- response_type: {verification.get("verdict")}
 - display_policy: {verification.get("display_policy")}
 - answer_shown_to_user: {shown}
 - ai_error: {ai_error or ""}
 
 ## Visible Answer
 
-{visible_answer or "(blocked by Verifier Agent)"}
+{visible_answer or "(no answer)"}
 
 ## Draft Answer
 
 {draft_answer}
 
-## Verifier Analysis
+## Verification Policy
 
 ```json
 {json_block(verification)}
 ```
 
-## Verifier Raw Output
+## Verifier Agent
 
 ```text
-{verifier_raw_output or "(no raw output)"}
+研究方針により、このレポートでは Verifier Agent を使用していません。
 ```
 
 ## Evidence DB Used By Prompt
@@ -174,13 +176,28 @@ async def ask_official_question(
     refresh: bool = False,
     limit: int = 20,
     followup_context: str = "",
+    include_simulated: bool = False,
+    category: Optional[str] = None,
+    area: Optional[str] = None,
+    min_severity: Optional[float] = None,
 ) -> dict:
-    """Generator → Verifier → 保存 → API返却値作成の一連の流れ。"""
+    """Evidence DB に基づく要約回答を返す。Verifier Agent は使用しない。"""
     if refresh:
         await run_official_sync(force=True, limit=max(1, min(limit, 100)), source="ask-refresh")
     conn = get_db()
-    observations = load_latest_official_signals_by_source(conn, limit_per_source=1)
-    db_observations = load_area_official_signals(conn, limit=1000)
+    observations = select_relevant_observations(
+        question,
+        load_safety_events(
+            conn,
+            limit=max(20, min(limit, 100)),
+            include_simulated=include_simulated,
+            category=category or None,
+            area=area or None,
+            min_severity=min_severity,
+        ),
+        limit=limit,
+    )
+    db_observations = load_area_official_signals(conn, limit=1000, include_simulated=include_simulated)
     conn.close()
 
     ai_error = None
@@ -188,21 +205,21 @@ async def ask_official_question(
     try:
         draft_answer, model = await call_ai(generator_prompt, model=AI_GENERATOR_MODEL)
     except Exception as exc:
-        draft_answer = "AI回答生成に失敗しました。公式情報一覧を確認してください。"
+        draft_answer = build_fallback_answer(question, observations)
         model = "answer-generation-fallback"
         ai_error = str(exc)
 
-    verifier_prompt = build_verifier_prompt(question, draft_answer, observations)
-    verification, verifier_error, verifier_raw_output = await verify_answer(
-        question,
-        draft_answer,
-        observations,
-        verifier_prompt,
-    )
-    if verifier_error:
-        ai_error = f"{ai_error or ''} verifier: {verifier_error}".strip()
+    verifier_prompt = "Verifier Agent は本研究テーマから外しているため使用しません。"
+    verifier_raw_output = ""
+    verification = {
+        "verdict": "REFERENCE_SUMMARY",
+        "display_policy": "SHOW",
+        "warning": "この回答は保存済みの都市安全情報に基づく要約です。模擬データを含む場合は実際の公的発表ではありません。",
+        "reasons": ["研究方針により Verifier Agent は使用せず、参照情報と模擬データ有無を明示します。"],
+        "checked_claims": [],
+    }
 
-    visible_answer = draft_answer if verification["display_policy"] != "DO_NOT_SHOW" else None
+    visible_answer = draft_answer
     answer_id = save_answer_verification(
         question,
         draft_answer,
@@ -229,15 +246,78 @@ async def ask_official_question(
         ai_error=ai_error,
     )
     save_latest_ask_report(report)
+    references = build_references(observations)
     return {
         "id": answer_id,
         "question": question,
         "draft_answer": draft_answer,
         "answer": visible_answer,
         "verification": verification,
+        "generation_policy": "保存済み都市安全情報に基づく要約。Verifier Agent は使用しない。",
+        "references": references,
+        "includes_simulated": any(item.get("is_simulated") for item in observations),
+        "simulated_reference_count": sum(1 for item in observations if item.get("is_simulated")),
         "model": model,
         "provider": AI_PROVIDER,
         "ai_error": ai_error,
         "official_context_count": len(observations),
         "report_path": str(LATEST_ASK_REPORT_FILE),
     }
+
+
+def select_relevant_observations(question: str, observations: list[dict], limit: int = 20) -> list[dict]:
+    """質問語に近い情報を優先し、重要度の高い情報も残す。"""
+    keywords = [word for word in re_split_question(question) if len(word) >= 2]
+
+    def score(item: dict) -> tuple[float, str]:
+        text = " ".join(str(item.get(key) or "") for key in ("source", "category", "area", "label", "detail", "status"))
+        keyword_score = sum(1 for keyword in keywords if keyword in text)
+        severity = float(item.get("severity") or 0)
+        simulated_penalty = 0.0 if item.get("is_simulated") else 0.2
+        return keyword_score * 10 + severity + simulated_penalty, str(item.get("updated_at") or item.get("observed_at") or "")
+
+    ranked = sorted(observations, key=score, reverse=True)
+    return ranked[: max(1, min(limit, 50))]
+
+
+def re_split_question(question: str) -> list[str]:
+    """日本語・英数字混在の質問から簡易キーワードを取り出す。"""
+    import re
+
+    tokens = re.split(r"[\s、。,.!?！？/・（）()]+", question)
+    return [token.strip() for token in tokens if token.strip()]
+
+
+def build_references(observations: list[dict]) -> list[dict]:
+    """フロントエンドと実験記録で使う参照情報を作る。"""
+    return [
+        {
+            "source": item.get("source"),
+            "category": item.get("category"),
+            "area": item.get("area"),
+            "label": item.get("display_label") or item.get("label"),
+            "status": item.get("status"),
+            "severity": item.get("severity"),
+            "updated_at": item.get("updated_at") or item.get("created_at") or item.get("observed_at"),
+            "source_url": item.get("source_url"),
+            "is_simulated": bool(item.get("is_simulated")),
+        }
+        for item in observations
+    ]
+
+
+def build_fallback_answer(question: str, observations: list[dict]) -> str:
+    """AIが使えない場合でも研究デモを継続できる決定的な要約を返す。"""
+    if not observations:
+        return "保存済みの都市安全情報がないため、この質問に回答できません。公式情報を更新してから再確認してください。"
+    lines = [f"質問「{question}」に関連する保存済み情報の要約です。"]
+    for item in observations[:5]:
+        simulated = "模擬データ" if item.get("is_simulated") else "公的情報"
+        updated = item.get("updated_at") or item.get("created_at") or item.get("observed_at")
+        lines.append(
+            f"{item.get('category', 'その他')}・{item.get('area')}: {item.get('display_label') or item.get('label')} "
+            f"（状態: {item.get('status')}、重要度: {item.get('severity')}、{simulated}、更新: {updated}）。"
+        )
+    if any(item.get("is_simulated") for item in observations):
+        lines.append("上記には研究検証用の模擬データが含まれます。実際の判断には公的機関の最新情報を確認してください。")
+    return "\n".join(lines)

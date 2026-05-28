@@ -6,15 +6,18 @@ from config import OFFICIAL_LLM_RAW_CHARS
 
 
 def official_context_text(observations: list[dict]) -> str:
-    """Verifier と Generator に渡す Evidence DB の短いテキスト表現。"""
+    """回答生成に渡す Evidence DB の短いテキスト表現。"""
     if not observations:
-        return "取得済みの公式情報はありません。"
+        return "取得済みの都市安全情報はありません。"
     lines = []
     for item in observations[:20]:
+        simulated_note = " / 模擬データ" if item.get("is_simulated") else " / 公的情報"
         lines.append(
-            f"- {item.get('source')} / {item.get('area')} / {item.get('label')} / "
+            f"- {item.get('source')} / {item.get('category')} / {item.get('area')} / {item.get('label')} / "
             f"status={item.get('status')} / "
-            f"observed_at={item.get('observed_at')} / url={item.get('source_url')} / detail={item.get('detail')}"
+            f"severity={item.get('severity')} / observed_at={item.get('observed_at')} / "
+            f"updated_at={item.get('updated_at') or item.get('created_at')} / "
+            f"url={item.get('source_url')} /{simulated_note} / detail={item.get('detail')}"
         )
     return "\n".join(lines)
 
@@ -76,7 +79,7 @@ def build_official_normalization_prompt(records: list[dict]) -> str:
 
 
 def build_answer_prompt(question: str, observations: list[dict], followup_context: str = "") -> str:
-    """Evidence DB だけに基づいて draft answer を生成するプロンプト。"""
+    """Evidence DB だけに基づいて都市安全情報の要約回答を生成するプロンプト。"""
     context_section = ""
     if followup_context.strip():
         context_section = f"""
@@ -84,30 +87,30 @@ def build_answer_prompt(question: str, observations: list[dict], followup_contex
 {followup_context.strip()}
 
 注意:
-- 上記コンテキストは会話の参照用であり、事実根拠は必ず下記の公式情報DBに限定する。
-- 前回回答が Verifier によって遮断されている場合、その内容を事実として引き継がない。
+- 上記コンテキストは会話の参照用であり、事実根拠は必ず下記の都市安全情報DBに限定する。
 """
-    return f"""あなたは都市安全情報の回答生成Agentです。
-ユーザーの質問に対し、下記の公式情報DBだけを根拠に暫定回答 draft_answer を作成してください。
+    return f"""あなたは都市安全情報を整理する研究用アシスタントです。
+ユーザーの質問に対し、下記の都市安全情報DBだけを根拠に要約回答を作成してください。
 
 制約:
-- 公式情報DBにない事故・災害・遅延・被害を作らない。
+- 都市安全情報DBにない事故・災害・遅延・被害を作らない。
+- 模擬データを使う場合は、必ず「模擬データ」と明記し、実際の公的発表ではないと分かるようにする。
+- 公的情報と模擬データを混同しない。
 - ユーザーが「どこへ行く」「どう移動する」と質問した場合は、一般的な地理・交通知識で目的地に関係しそうな交通手段や方面を推定してよい。
-- ただし、経路推定は「一般的には」「関係しそうな情報として」と明示し、公式情報DBの事実とは分けて書く。
+- ただし、経路推定は「一般的には」「関係しそうな情報として」と明示し、DB上の事実とは分けて書く。
 - 経路推定で「アクセス可能です」「直通できます」「駅があります」「目的地は路線Aの沿線です」「路線Aの遅延が目的地に影響します」と断定しない。
-- 目的地と路線の接続関係が公式情報DBにない場合は、「このDBだけでは経路可否や直接影響は判断できません」と明示する。
+- 目的地と路線の接続関係が都市安全情報DBにない場合は、「このDBだけでは経路可否や直接影響は判断できません」と明示する。
 - 関係しそうな情報を挙げる場合も、「JR東海では○○線に遅れがあります」のようにDB上の事実だけを述べ、目的地への影響は断定しない。
-- 公式情報DBにない事故・遅延・運休・天候・所要時間・安全判断を経路推定から作らない。
-- 公式情報DBに路線障害だけがあり、目的地への直接影響が明記されていない場合は「目的地への直接影響はこのDBだけでは断定できない」と答える。
+- 都市安全情報DBにない事故・遅延・運休・天候・所要時間・安全判断を経路推定から作らない。
 - 不明な場合は不明と言う。
-- 回答は短く、利用者が次に確認すべき公式情報を明示する。
+- 回答は短く、参照した情報源、更新時刻、模擬データの有無を明示する。
 - JSONやMarkdownではなく、自然な日本語本文だけを出力する。
 {context_section}
 
 ユーザー質問:
 {question}
 
-公式情報DB:
+都市安全情報DB:
 {official_context_text(observations)}
 """
 

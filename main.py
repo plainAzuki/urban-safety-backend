@@ -26,17 +26,22 @@ from config import (
     OFFICIAL_HISTORY_PER_SOURCE,
 )
 from db import (
+    count_simulated_events,
     delete_answer_cache,
+    delete_simulated_events,
     get_db,
     load_latest_official_signals_by_source,
     load_official_history_for_source,
+    load_safety_events,
+    save_area_official_signals,
 )
 from official_service import build_data_summary, live_official_summary, run_official_sync
 from official_sources import fetch_jma_aichi_signals, official_status_catalog, source_catalog
 from schemas import AskRequest
+from simulated_events import build_simulated_events, scenario_catalog
 
 
-app = FastAPI(title="Urban Safety Official Agent", version="3.0.0")
+app = FastAPI(title="Urban Safety Research Backend", version="4.0.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 # バックグラウンド同期はアプリ起動中だけ生きるタスクとして管理する。
@@ -80,7 +85,7 @@ async def stop_official_background_sync() -> None:
 @app.get("/")
 def root():
     """疎通確認用の最小エンドポイント。"""
-    return {"status": "ok", "version": "3.0.0"}
+    return {"status": "ok", "version": "4.0.0", "theme": "公的情報と模擬イベントデータに基づく都市安全情報集約・可視化"}
 
 
 @app.get("/system/overview")
@@ -92,43 +97,47 @@ def get_system_overview():
     official_count = cur.fetchone()[0]
     cur.execute("SELECT COUNT(*) FROM answer_verifications")
     answer_count = cur.fetchone()[0]
+    simulated_count = count_simulated_events(conn)
     conn.close()
     return {
-        "concept": "公式情報を取得・構造化し、回答生成AgentとVerifier Agentで利用者表示を制御する都市安全情報プロトタイプ",
+        "concept": "公的情報と模擬イベントデータに基づく都市安全情報集約・可視化システムの研究用プロトタイプ",
         "pipeline": [
-            "公式情報源",
+            "公的情報源",
             "official/sync で取得",
             "LLMまたはルールで構造化",
-            "公式情報DBへ保存",
-            "ユーザー質問",
-            "回答生成Agentで draft_answer を生成",
-            "Verifier Agent が PASS / FAIL / NEEDS_REVIEW を判定",
-            "SHOW / SHOW_WITH_WARNING / DO_NOT_SHOW に従ってUI表示",
+            "研究用模擬イベントを必要に応じて追加",
+            "都市安全情報DBへ保存",
+            "モバイルUIで通常時・異常時を可視化",
+            "ユーザー質問に対して保存済み情報から要約回答を生成",
+            "参照情報・更新時刻・模擬データ有無を表示",
         ],
         "ai": current_ai_config(),
         "official_statuses": official_status_catalog(),
         "database": {
             "official_observation_count": official_count,
+            "simulated_observation_count": simulated_count,
             "answer_verification_count": answer_count,
         },
     }
 
 
 @app.get("/dashboard")
-def get_dashboard():
-    """フロント画面用に、最新公式情報・全体状態・AI設定を返す。"""
+def get_dashboard(include_simulated: bool = False):
+    """フロント画面用に、最新都市安全情報・全体状態・AI設定を返す。"""
     conn = get_db()
-    observations = load_latest_official_signals_by_source(conn, limit_per_source=1)
+    observations = load_latest_official_signals_by_source(conn, limit_per_source=1, include_simulated=include_simulated)
     conn.close()
     summary = live_official_summary(observations)
     return {
-        "basis": "公式サイト・公式APIから取得した情報のみを表示しています",
+        "basis": "公的情報を基本に表示しています。模擬データを含める場合は研究検証用として明示します。",
         "data_summary": build_data_summary(observations),
         "official_summary": summary,
         "official_observations": observations,
         "official_count": len(observations),
+        "include_simulated": include_simulated,
+        "simulated_count": sum(1 for item in observations if item.get("is_simulated")),
         "ai_config": current_ai_config(),
-        "display_policy": "official_only",
+        "display_policy": "evidence_with_simulation_label",
     }
 
 
@@ -151,21 +160,102 @@ def get_official_sources():
 def get_live_official_observations(
     limit: int = Query(default=20, ge=1, le=100),
     source: Optional[str] = Query(default=None),
+    include_simulated: bool = Query(default=False),
 ):
-    """Evidence DB に保存済みの公式情報を返す。"""
+    """Evidence DB に保存済みの都市安全情報を返す。"""
     conn = get_db()
     if source:
         observations = load_official_history_for_source(conn, source, limit=limit)
     else:
-        observations = load_latest_official_signals_by_source(conn, limit_per_source=1)[:limit]
+        observations = load_latest_official_signals_by_source(
+            conn,
+            limit_per_source=1,
+            include_simulated=include_simulated,
+        )[:limit]
     conn.close()
     return {
         "source": source,
         "observations": observations,
         "count": len(observations),
         "summary": live_official_summary(observations),
+        "include_simulated": include_simulated,
         "history_per_source": OFFICIAL_HISTORY_PER_SOURCE,
     }
+
+
+@app.get("/safety/events")
+def get_safety_events(
+    limit: int = Query(default=50, ge=1, le=200),
+    include_simulated: bool = Query(default=False),
+    category: Optional[str] = Query(default=None),
+    area: Optional[str] = Query(default=None),
+    min_severity: Optional[float] = Query(default=None, ge=0),
+):
+    """統一データモデルで都市安全情報一覧を返す研究用API。"""
+    conn = get_db()
+    observations = load_safety_events(
+        conn,
+        limit=limit,
+        include_simulated=include_simulated,
+        category=category,
+        area=area,
+        min_severity=min_severity,
+    )
+    conn.close()
+    return {
+        "events": observations,
+        "count": len(observations),
+        "include_simulated": include_simulated,
+        "filters": {
+            "category": category,
+            "area": area,
+            "min_severity": min_severity,
+        },
+        "summary": live_official_summary(observations),
+    }
+
+
+@app.get("/safety/simulated-events/scenarios")
+def get_simulated_event_scenarios():
+    """研究検証用に利用できる模擬シナリオ一覧。"""
+    return {
+        "notice": "ここに含まれるデータは研究検証用であり、公的情報ではありません。",
+        "scenarios": scenario_catalog(),
+    }
+
+
+@app.post("/safety/simulated-events/load")
+def load_simulated_event_scenario(
+    scenario: str = Query(default="multi_event"),
+    mode: str = Query(default="replace", pattern="^(replace|append)$"),
+):
+    """指定した模擬シナリオを Evidence DB に保存する。"""
+    try:
+        events = build_simulated_events(scenario)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    conn = get_db()
+    deleted = delete_simulated_events(conn) if mode == "replace" else 0
+    saved = save_area_official_signals(conn, events)
+    total_simulated = count_simulated_events(conn)
+    conn.close()
+    return {
+        "scenario": scenario,
+        "mode": mode,
+        "deleted_simulated_events": deleted,
+        "saved_simulated_events": saved,
+        "total_simulated_events": total_simulated,
+        "notice": "保存されたデータは研究検証用の模擬データです。実際の公的発表ではありません。",
+    }
+
+
+@app.delete("/safety/simulated-events")
+def clear_simulated_event_scenario():
+    """Evidence DB から模擬イベントだけを削除する。"""
+    conn = get_db()
+    deleted = delete_simulated_events(conn)
+    conn.close()
+    return {"deleted_simulated_events": deleted}
 
 
 @app.get("/official/live/weather")
@@ -197,12 +287,20 @@ async def ask_official_agent(request: AskRequest):
             refresh=False,
             limit=request.limit,
             followup_context=request.followup_context,
+            include_simulated=request.include_simulated,
+            category=request.category,
+            area=request.area,
+            min_severity=request.min_severity,
         )
     return await ask_official_question(
         question,
         refresh=False,
         limit=request.limit,
         followup_context=request.followup_context,
+        include_simulated=request.include_simulated,
+        category=request.category,
+        area=request.area,
+        min_severity=request.min_severity,
     )
 
 

@@ -28,7 +28,7 @@ from official_sources import fetch_raw_official_records, now_text
 from prompts import build_official_normalization_prompt
 
 
-OFFICIAL_SIGNAL_STATUSES = {"通常", "情報", "注意", "警戒", "運休", "支障", "取得不可"}
+OFFICIAL_SIGNAL_STATUSES = {"通常", "情報", "注意", "警戒", "危険", "運休", "支障", "取得不可"}
 STATUS_PRIORITY = {
     "取得不可": 0,
     "通常": 1,
@@ -37,6 +37,7 @@ STATUS_PRIORITY = {
     "支障": 4,
     "警戒": 5,
     "運休": 5,
+    "危険": 6,
 }
 
 TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -115,6 +116,7 @@ def live_official_summary(observations: Optional[list[dict]] = None) -> dict:
         "count": len(observations),
         "status": summarize_status(observations),
         "sources": sorted({item["source"] for item in observations}),
+        "simulated_count": sum(1 for item in observations if item.get("is_simulated")),
         "history_per_source": OFFICIAL_HISTORY_PER_SOURCE,
     }
 
@@ -125,6 +127,8 @@ def build_data_summary(observations: list[dict]) -> dict:
     return {
         "official_count": len(observations),
         "live_official_count": len(observations),
+        "simulated_count": sum(1 for item in observations if item.get("is_simulated")),
+        "real_data_count": sum(1 for item in observations if not item.get("is_simulated")),
         "live_official_summary": live_official_summary(observations),
         "latest_live_official": latest,
         "latest_timestamp": latest.get("observed_at") if latest else None,
@@ -137,12 +141,16 @@ def clean_official_signal(signal: dict) -> dict:
     return {
         "source": str(signal.get("source") or "公式情報").strip()[:80],
         "source_url": str(signal.get("source_url") or signal.get("url") or "").strip()[:500],
+        "category": str(signal.get("category") or "その他").strip()[:40],
         "area": str(signal.get("area") or "愛知県").strip()[:80],
         "label": str(signal.get("label") or "公式情報確認").strip()[:120],
-        "severity": 0.0,
+        "display_label": str(signal.get("display_label") or signal.get("label") or "公式情報確認").strip()[:160],
+        "severity": float(signal.get("severity") or 0.0),
         "status": status,
         "detail": str(signal.get("detail") or "").strip()[:1200],
         "observed_at": normalize_observed_at(signal.get("observed_at")),
+        "updated_at": normalize_observed_at(signal.get("updated_at") or signal.get("observed_at")),
+        "is_simulated": bool(signal.get("is_simulated")),
     }
 
 

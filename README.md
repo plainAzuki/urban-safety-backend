@@ -1,6 +1,12 @@
-# Urban Safety Official Agent Backend
+# Urban Safety Research Backend
 
-愛知県の公式情報を取得し、LLMで構造化したうえで、回答生成 Agent と Verifier Agent により利用者への表示可否を制御する FastAPI バックエンドです。
+公的情報と模擬イベントデータに基づく都市安全情報集約・可視化システムの FastAPI バックエンドです。
+
+本プロジェクトは、実運用可能な防災製品ではなく、卒業研究として「公的情報と模擬データを組み合わせた都市安全情報支援システムの設計・実装および可行性検証」を行うための原型システムです。
+
+## 研究テーマ
+
+公的情報と模擬イベントデータに基づく都市安全情報集約・可視化システムの設計と実装
 
 ## 起動
 
@@ -13,57 +19,69 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ## データフロー
 
 ```text
-公式情報源
+公的情報源
   ↓
-official/sync 取得
+official/sync で取得
   ↓
-LLM またはルールで構造化
+LLM またはルールで統一データモデルへ構造化
   ↓
-公式情報 DB
+都市安全情報DB
+  ↑
+研究用模擬イベントデータ
   ↓
-ユーザー質問
+API
   ↓
-回答生成 Agent
+モバイルUIで通常時・異常時を可視化
   ↓
-draft_answer
-  ↓
-Verifier Agent
-  ↓
-PASS / FAIL / NEEDS_REVIEW
-  ↓
-SHOW / SHOW_WITH_WARNING / DO_NOT_SHOW
-  ↓
-UI 表示
+自然言語問い合わせに対して保存済み情報から要約回答
 ```
 
 ## 主な API
 
-- `GET /dashboard`: 保存済み公式情報の要約と一覧を返します。
-- `POST /official/sync?force=true&limit=1`: 公式情報源へアクセスし、LLMで構造化してDBへ保存します。
-- `GET /official/live`: DBに保存済みの公式情報を返します。
-- `GET /official/sources`: 取得対象の公式情報カタログを返します。
-- `GET /official/live/weather`: 気象庁防災情報XMLから愛知県関連情報を取得します。
-- `POST /ask`: 公式情報DBを根拠に回答を生成し、Verifier Agent の判定結果と表示ポリシーを返します。
-- `DELETE /answers/cache`: 保存済みの回答検証履歴を削除します。
-- `GET /system/overview`: 現在のパイプラインとDB状態を返します。
+- `GET /dashboard?include_simulated=false`: 画面用の概要と最新情報を返します。
+- `GET /safety/events`: 統一データモデルの都市安全情報一覧を返します。
+- `POST /official/sync?force=true&limit=1`: 公的情報源へアクセスし、DBへ保存します。
+- `GET /official/live`: DBに保存済みの情報を返します。
+- `GET /official/sources`: 取得対象の公的情報カタログを返します。
+- `GET /safety/simulated-events/scenarios`: 研究用の模擬シナリオ一覧を返します。
+- `POST /safety/simulated-events/load?scenario=multi_event&mode=replace`: 模擬イベントを保存します。
+- `DELETE /safety/simulated-events`: 模擬イベントだけを削除します。
+- `POST /ask`: 保存済み情報に基づく要約回答、参照情報、模擬データ有無を返します。
+- `GET /system/overview`: 現在の研究用パイプラインとDB状態を返します。
 - `GET /health`: DBとAI接続状態を確認します。
+
+## 模擬データの扱い
+
+模擬データは公的情報ではありません。すべての模擬イベントには以下を付与します。
+
+- `is_simulated: true`
+- `source: 研究用模擬イベントデータ`
+- `display_label` の「模擬データ」表示
+- 詳細文の「実際の公的発表ではありません」という注記
 
 ## AI 設定
 
-未指定の場合はローカル Ollama の `qwen3.6:35b-a3b` を使います。必要な場合だけ環境変数で上書きしてください。
-`AI_MODEL` は全体のデフォルトで、Generator / Verifier / 公式情報正規化は個別にも指定できます。
+未指定の場合はローカル Ollama の `qwen3.6:35b-a3b` を使います。AI が利用できない場合でも、保存済み情報から決定的なフォールバック要約を返します。
 
 ```bash
 AI_PROVIDER=ollama
 AI_MODEL=qwen3.6:35b-a3b
 AI_GENERATOR_MODEL=qwen3.6:35b-a3b
-AI_VERIFIER_MODEL=qwen3.6:35b-a3b
 AI_NORMALIZER_MODEL=qwen3.6:35b-a3b
 AI_BASE_URL=http://localhost:11434/api/generate
 ```
 
-API互換サーバーを使う場合は `AI_PROVIDER=api`、`AI_BASE_URL`、各モデル名、必要に応じて `AI_API_KEY` を設定します。
+## 卒業研究用ドキュメント
 
-## 定期取得
+- `docs/research_goal_ja.md`
+- `docs/system_design_ja.md`
+- `docs/experiment_plan_ja.md`
+- `docs/thesis_outline_ja.md`
+- `docs/references_ja.md`
+- `docs/api_examples_ja.md`
 
-バックエンド起動中は、デフォルトで30分ごとに公式情報の取得可否を確認します。手動更新は `force=true` によりキャッシュ間隔を無視して取得します。
+## 実験成果物
+
+- `experiments/sample_results_ja.md`
+- `experiments/sample_results.json`
+- `experiments/evaluation_table.csv`
