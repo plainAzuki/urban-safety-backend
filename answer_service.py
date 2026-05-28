@@ -78,6 +78,7 @@ def json_block(data) -> str:
 def build_ask_report(
     answer_id: str,
     question: str,
+    followup_context: str,
     db_observations: list[dict],
     prompt_observations: list[dict],
     generator_prompt: str,
@@ -104,6 +105,10 @@ verifier_model: {AI_VERIFIER_MODEL}
 ## Question
 
 {question}
+
+## Follow-up Context
+
+{followup_context or "(none)"}
 
 ## Result Summary
 
@@ -164,7 +169,12 @@ def save_latest_ask_report(report: str) -> None:
     LATEST_ASK_REPORT_FILE.write_text(report, encoding="utf-8")
 
 
-async def ask_official_question(question: str, refresh: bool = False, limit: int = 20) -> dict:
+async def ask_official_question(
+    question: str,
+    refresh: bool = False,
+    limit: int = 20,
+    followup_context: str = "",
+) -> dict:
     """Generator → Verifier → 保存 → API返却値作成の一連の流れ。"""
     if refresh:
         await run_official_sync(force=True, limit=max(1, min(limit, 100)), source="ask-refresh")
@@ -174,7 +184,7 @@ async def ask_official_question(question: str, refresh: bool = False, limit: int
     conn.close()
 
     ai_error = None
-    generator_prompt = build_answer_prompt(question, observations)
+    generator_prompt = build_answer_prompt(question, observations, followup_context=followup_context)
     try:
         draft_answer, model = await call_ai(generator_prompt, model=AI_GENERATOR_MODEL)
     except Exception as exc:
@@ -205,6 +215,7 @@ async def ask_official_question(question: str, refresh: bool = False, limit: int
     report = build_ask_report(
         answer_id=answer_id,
         question=question,
+        followup_context=followup_context,
         db_observations=db_observations,
         prompt_observations=observations,
         generator_prompt=generator_prompt,
@@ -228,6 +239,5 @@ async def ask_official_question(question: str, refresh: bool = False, limit: int
         "provider": AI_PROVIDER,
         "ai_error": ai_error,
         "official_context_count": len(observations),
-        "report": report,
         "report_path": str(LATEST_ASK_REPORT_FILE),
     }

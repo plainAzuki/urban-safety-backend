@@ -192,8 +192,18 @@ async def ask_official_agent(request: AskRequest):
         raise HTTPException(status_code=400, detail="question is required")
     if request.refresh:
         await locked_official_sync(force=True, limit=max(1, min(request.limit, 100)), source="ask-refresh")
-        return await ask_official_question(question, refresh=False, limit=request.limit)
-    return await ask_official_question(question, refresh=False, limit=request.limit)
+        return await ask_official_question(
+            question,
+            refresh=False,
+            limit=request.limit,
+            followup_context=request.followup_context,
+        )
+    return await ask_official_question(
+        question,
+        refresh=False,
+        limit=request.limit,
+        followup_context=request.followup_context,
+    )
 
 
 @app.delete("/answers/cache")

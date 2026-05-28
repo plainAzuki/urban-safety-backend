@@ -34,4 +34,4 @@ OFFICIAL_BACKGROUND_INTERVAL_MINUTES = int(env_value("OFFICIAL_BACKGROUND_INTERV
 OFFICIAL_HISTORY_PER_SOURCE = int(env_value("OFFICIAL_HISTORY_PER_SOURCE", "5"))
 
 # SQLite DB はバックエンドディレクトリ直下に固定する。
-DB_FILE = Path(__file__).parent / "urban_safety.db"
+DB_FILE = Path(env_value("DB_FILE", str(Path(__file__).parent / "urban_safety.db")))

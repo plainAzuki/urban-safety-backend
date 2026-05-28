@@ -1,7 +1,5 @@
-"""Official source definitions and raw data fetchers.
-
-This module deliberately stops at fetching official data and applying small,
-deterministic parsing rules. LLM normalization happens in official_service.py.
+"""公式ソースの定義及び生データの取得
+LLM による正規化は official_service.pyで行う。
 """
 
 import asyncio
@@ -27,6 +25,8 @@ AICHI_BOUSAI_SOURCE_NAME = "愛知県 災害関連情報ポータル"
 KOTSU_CITY_SOURCE_NAME = "名古屋市交通局 運行情報"
 JR_TOKAI_SOURCE_NAME = "JR東海 運行情報"
 IHIGHWAY_SOURCE_NAME = "NEXCO中日本 交通情報"
+LINIMO_SOURCE_NAME = "リニモ 運行情報"
+AIKAN_SOURCE_NAME = "愛知環状鉄道 運行情報"
 
 AICHI_BOUSAI_URLS = {
     "weather_warn": "https://www-bousai1.kenbousai-cloud.pref.aichi.jp/data/weather/warn/top_warn.json",
@@ -52,6 +52,8 @@ PUBLIC_SOURCE_URLS = {
     "jr_tokai": "https://traininfo.jr-central.co.jp/zairaisen/",
     "ihighway": "https://www.c-ihighway.jp/pcsite/map?area=area05",
     "jma_aichi": "https://www.jma.go.jp/bosai/#pattern=default&area_type=offices&area_code=230000",
+    "linimo": "https://www.linimo.jp//delay/",
+    "aikan": "https://www.aikanrailway.co.jp/train/",
 }
 KOTSU_CITY_URLS = {
     "latest_traffic": "https://www.kotsu.city.nagoya.jp/datas/latest_traffic.json",
@@ -65,6 +67,7 @@ class PageSource:
     category: str
     url: str
     note: str = ""
+    public_url: str = ""
 
 
 PAGE_SOURCES: tuple[PageSource, ...] = (
@@ -74,6 +77,21 @@ PAGE_SOURCES: tuple[PageSource, ...] = (
         category="railway",
         url="https://top.meitetsu.co.jp/em/?mediacd=012",
         note="名鉄の公式運行情報",
+    ),
+    PageSource(
+        source=LINIMO_SOURCE_NAME,
+        area="愛知県・長久手市周辺",
+        category="railway",
+        url=PUBLIC_SOURCE_URLS["linimo"],
+        note="リニモの公式運行情報",
+    ),
+    PageSource(
+        source=AIKAN_SOURCE_NAME,
+        area="愛知県・岡崎市から春日井市周辺",
+        category="railway",
+        url="https://www.aikanrailway.co.jp/AikanJsp/ZaisenInfo3.jsp",
+        note="愛知環状鉄道の公式列車運行情報",
+        public_url=PUBLIC_SOURCE_URLS["aikan"],
     ),
 )
 
@@ -97,7 +115,7 @@ OFFICIAL_SOURCE_CATALOG = [
         "key": "railway",
         "name": "鉄道運行情報",
         "area": "愛知県内の主要路線",
-        "signal": "名鉄・名古屋市交通局の公式ページとJR東海の公式JSONを低頻度で確認",
+        "signal": "JR東海・名鉄・名古屋市交通局・リニモ・愛知環状鉄道の公式情報を低頻度で確認",
         "status": "official_page_or_json_poll",
     },
     {
@@ -176,6 +194,8 @@ def focus_page_text(source: PageSource, text: str) -> str:
     anchors = {
         "名古屋市交通局 運行情報": ("現在の情報", "運行情報ページ"),
         "名古屋鉄道 運行情報": ("15分以上", "列車運行情報"),
+        LINIMO_SOURCE_NAME: ("最終更新", "現在、"),
+        AIKAN_SOURCE_NAME: ("現在", "ただいま列車"),
     }.get(source.source, ())
     for anchor in anchors:
         index = text.find(anchor)
@@ -725,7 +745,7 @@ async def fetch_page_record(client: httpx.AsyncClient, source: PageSource) -> di
         "area": source.area,
         "category": source.category,
         "url": source.url,
-        "source_url": source.url,
+        "source_url": source.public_url or source.url,
         "title": title,
         "raw_text": raw_text,
         "observed_at": observed_at,
