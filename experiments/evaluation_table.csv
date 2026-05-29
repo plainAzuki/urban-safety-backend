@@ -1,7 +1,0 @@
-実験ID,条件,入力,期待結果,確認結果,備考
-T01,通常時,/dashboard?include_simulated=false,公的情報のみを表示,,模擬データなし
-T02,通常時,/ask include_simulated=false,保存済み情報に基づく要約と参照情報を返す,,
-T03,模擬異常時,/safety/simulated-events/load?scenario=multi_event&mode=replace,模擬イベントが保存される,,研究検証用
-T04,模擬異常時,/dashboard?include_simulated=true,模擬データラベル付きで異常情報を表示,,
-T05,模擬異常時,/ask include_simulated=true,関連する模擬情報と参照情報を返す,,
-T06,復帰確認,DELETE /safety/simulated-events,模擬イベントだけ削除,,
