@@ -13,7 +13,6 @@ from config import (
     AI_PROVIDER,
     AI_THINK,
     AI_TIMEOUT_SECONDS,
-    AI_VERIFIER_MODEL,
 )
 
 
@@ -28,7 +27,6 @@ def current_ai_config() -> dict:
         "provider": AI_PROVIDER,
         "model": active_ai_model(),
         "generator_model": AI_GENERATOR_MODEL or active_ai_model(),
-        "verifier_model": AI_VERIFIER_MODEL or active_ai_model(),
         "normalizer_model": AI_NORMALIZER_MODEL or active_ai_model(),
         "base_url": AI_BASE_URL,
         "json_mode": AI_PROVIDER == "ollama",
@@ -50,7 +48,12 @@ def require_ai_config(model: Optional[str] = None) -> None:
         raise RuntimeError("AI_BASE_URL が設定されていません。")
 
 
-async def call_ollama(prompt: str, json_mode: bool = False, model: Optional[str] = None) -> str:
+async def call_ollama(
+    prompt: str,
+    json_mode: bool = False,
+    model: Optional[str] = None,
+    num_predict: Optional[int] = None,
+) -> str:
     """Ollama の generate API を呼び出す。"""
     active_model = model or AI_MODEL
     require_ai_config(active_model)
@@ -58,7 +61,10 @@ async def call_ollama(prompt: str, json_mode: bool = False, model: Optional[str]
         "model": active_model,
         "prompt": prompt,
         "stream": False,
-        "options": {"temperature": 0.1 if json_mode else 0.2, "num_predict": 1200 if json_mode else 700},
+        "options": {
+            "temperature": 0.1 if json_mode else 0.2,
+            "num_predict": num_predict or (1200 if json_mode else 700),
+        },
     }
     if json_mode:
         payload["format"] = "json"

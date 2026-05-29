@@ -16,7 +16,6 @@ def env_value(name: str, default: str = "") -> str:
 AI_PROVIDER = env_value("AI_PROVIDER", "ollama").lower()
 AI_MODEL = env_value("AI_MODEL", "qwen3.6:35b-a3b")
 AI_GENERATOR_MODEL = env_value("AI_GENERATOR_MODEL", AI_MODEL)
-AI_VERIFIER_MODEL = env_value("AI_VERIFIER_MODEL", AI_MODEL)
 AI_NORMALIZER_MODEL = env_value("AI_NORMALIZER_MODEL", AI_MODEL)
 AI_BASE_URL = env_value(
     "AI_BASE_URL",

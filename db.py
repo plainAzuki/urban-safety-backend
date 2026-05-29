@@ -1,7 +1,7 @@
 """SQLite のテーブル定義とCRUD。
 
-卒論上は official_area_observations が Evidence DB、
-answer_verifications が AI回答検証ログに対応する。
+卒論上は official_area_observations が都市安全情報DB、
+answer_logs が自然言語問い合わせの回答ログに対応する。
 """
 
 import json
@@ -35,22 +35,19 @@ CREATE INDEX IF NOT EXISTS idx_area_observed_at ON official_area_observations(ob
 CREATE INDEX IF NOT EXISTS idx_area_source_created ON official_area_observations(source, created_at);
 """
 
-CREATE_ANSWER_VERIFICATIONS_TABLE = """
-CREATE TABLE IF NOT EXISTS answer_verifications (
+CREATE_ANSWER_LOGS_TABLE = """
+CREATE TABLE IF NOT EXISTS answer_logs (
     id             TEXT PRIMARY KEY,
     question       TEXT NOT NULL,
-    draft_answer   TEXT NOT NULL,
-    visible_answer TEXT,
-    verdict        TEXT NOT NULL,
-    display_policy TEXT NOT NULL,
-    warning        TEXT,
-    reasons_json   TEXT,
+    answer         TEXT NOT NULL,
+    references_json TEXT,
+    includes_simulated INTEGER DEFAULT 0,
     model          TEXT NOT NULL,
     provider       TEXT NOT NULL,
     ai_error       TEXT,
     created_at     TEXT DEFAULT (datetime('now', 'localtime'))
 );
-CREATE INDEX IF NOT EXISTS idx_answer_verifications_created ON answer_verifications(created_at);
+CREATE INDEX IF NOT EXISTS idx_answer_logs_created ON answer_logs(created_at);
 """
 
 DROP_OBSOLETE_TABLES = """
@@ -75,7 +72,7 @@ def ensure_tables(conn):
     conn.executescript(
         DROP_OBSOLETE_TABLES
         + CREATE_AREA_OFFICIAL_TABLE
-        + CREATE_ANSWER_VERIFICATIONS_TABLE
+        + CREATE_ANSWER_LOGS_TABLE
     )
     ensure_column(conn, "official_area_observations", "source_url", "TEXT")
     ensure_column(conn, "official_area_observations", "category", "TEXT DEFAULT 'その他'")
@@ -270,9 +267,29 @@ def load_safety_events(
             detail, observed_at, updated_at, is_simulated, created_at
         FROM official_area_observations
         WHERE {" AND ".join(conditions)}
-        ORDER BY severity DESC, datetime(updated_at) DESC, datetime(created_at) DESC
+        ORDER BY
+            CASE WHEN is_simulated = 1 THEN 0 ELSE 1 END,
+            CASE WHEN is_simulated = 1 THEN datetime(updated_at) END ASC,
+            CASE WHEN is_simulated = 0 THEN severity END DESC,
+            datetime(updated_at) DESC,
+            datetime(created_at) DESC
         LIMIT ?
     """, params)
+    return [official_signal_row_to_dict(row) for row in cur.fetchall()]
+
+
+def load_simulated_safety_events(conn, limit: int = 20) -> list[dict]:
+    """研究用の模擬イベントを生成順に取得する。"""
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT
+            source, source_url, category, area, label, display_label, severity, status,
+            detail, observed_at, updated_at, is_simulated, created_at
+        FROM official_area_observations
+        WHERE is_simulated = 1
+        ORDER BY datetime(updated_at) ASC, id ASC
+        LIMIT ?
+    """, (limit,))
     return [official_signal_row_to_dict(row) for row in cur.fetchall()]
 
 
@@ -316,45 +333,39 @@ def clear_area_official_sources(conn) -> None:
 
 
 def delete_answer_cache() -> int:
-    """回答検証ログを削除する。公式情報更新時の古い回答無効化に使う。"""
+    """保存済みの問い合わせ回答ログを削除する。公式情報更新時の古い回答無効化に使う。"""
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("DELETE FROM answer_verifications")
+    cur.execute("DELETE FROM answer_logs")
     deleted = cur.rowcount
     conn.commit()
     conn.close()
     return deleted
 
 
-def save_answer_verification(
+def save_answer_log(
     question: str,
-    draft_answer: str,
-    visible_answer: Optional[str],
-    verification: dict,
+    answer: str,
+    references: list[dict],
+    includes_simulated: bool,
     model: str,
     provider: str,
     ai_error: Optional[str],
 ) -> str:
-    """AI回答とVerifier判定を保存する。"""
+    """自然言語問い合わせの回答と参照情報を保存する。"""
     answer_id = str(uuid4())
     conn = get_db()
     conn.execute("""
-        INSERT INTO answer_verifications
-            (id, question, draft_answer, visible_answer, verdict, display_policy, warning, reasons_json, model, provider, ai_error)
+        INSERT INTO answer_logs
+            (id, question, answer, references_json, includes_simulated, model, provider, ai_error)
         VALUES
-            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         answer_id,
         question,
-        draft_answer,
-        visible_answer,
-        verification["verdict"],
-        verification["display_policy"],
-        verification.get("warning"),
-        json.dumps({
-            "reasons": verification.get("reasons", []),
-            "checked_claims": verification.get("checked_claims", []),
-        }, ensure_ascii=False),
+        answer,
+        json.dumps(references, ensure_ascii=False),
+        1 if includes_simulated else 0,
         model,
         provider,
         ai_error,

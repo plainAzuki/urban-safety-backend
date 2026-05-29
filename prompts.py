@@ -1,4 +1,4 @@
-"""Generator / Verifier / 公式情報正規化のプロンプト。"""
+"""回答生成と公式情報正規化のプロンプト。"""
 
 import json
 
@@ -94,7 +94,7 @@ def build_answer_prompt(question: str, observations: list[dict], followup_contex
 
 制約:
 - 都市安全情報DBにない事故・災害・遅延・被害を作らない。
-- 模擬データを使う場合は、必ず「模擬データ」と明記し、実際の公的発表ではないと分かるようにする。
+- 模擬データを使う場合は、必ず「模擬データ」と明記する。
 - 公的情報と模擬データを混同しない。
 - ユーザーが「どこへ行く」「どう移動する」と質問した場合は、一般的な地理・交通知識で目的地に関係しそうな交通手段や方面を推定してよい。
 - ただし、経路推定は「一般的には」「関係しそうな情報として」と明示し、DB上の事実とは分けて書く。
@@ -111,64 +111,5 @@ def build_answer_prompt(question: str, observations: list[dict], followup_contex
 {question}
 
 都市安全情報DB:
-{official_context_text(observations)}
-"""
-
-
-def build_verifier_prompt(question: str, draft_answer: str, observations: list[dict]) -> str:
-    """draft answer を公式 evidence と照合する Verifier Agent のプロンプト。"""
-    return f"""あなたは都市安全情報のVerifier Agentです。
-draft_answer が公式情報DBだけに基づいているかを検査してください。
-
-最重要ルール:
-- ユーザーが目的地への移動を質問している場合、Generator が一般的な地理・交通知識で「関係しそうな交通手段や方面」を推定すること自体は許可する。
-- ただし、その経路推定は公式情報DBの事実とは別扱いにしなければならない。
-- Verifier自身は、事故・遅延・運休・天候・安全性・現在の所要時間について公式情報DB以外の知識を使わない。
-- 「可能性がある」「影響が出るかもしれない」「利用できる/できない」も検証対象の主張として扱う。
-- 目的地、路線、交通手段、空港アクセス、乗換、迂回路の関係は、一般的な経路推定として明示されていれば FAIL にしない。
-- ただし「アクセス可能です」「直通できます」「駅があります」「目的地は路線Aの沿線です」「路線Aの遅延が目的地に影響します」のように、経路推定を事実として断定していれば FAIL。
-- 公式情報DBに「路線Aに遅延」とだけある場合、目的地への直接影響を断定していれば FAIL。関係しそうな情報として提示し、公式ページ確認を促していれば PASS または NEEDS_REVIEW。
-- 公式情報DBにない交通手段や路線名を、現在の運行障害・天候・安全性の根拠として扱っていれば FAIL。
-- 公式情報DBに直接根拠がないが、draft_answer が「不明」「公式ページで確認してください」と留保している場合は PASS または NEEDS_REVIEW にできる。
-- reasons では外部知識による正誤判定を書かず、「DBで確認できる/確認できない」ことだけを書く。
-
-FAILにする例:
-- 「JR東海では、東海道線で中部国際空港へのアクセスが可能です」
-- 「中部国際空港駅は豊橋より西にあるため、東海道線の遅延の影響を受ける可能性があります」
-- 「DBにない路線・駅・乗換を現在の移動判断の根拠として示している」
-
-PASSまたはNEEDS_REVIEWにできる例:
-- 「このDBだけではJRで中部国際空港に行けるかは判断できません。JR東海では東海道線に遅れがあるため、JR利用を検討する場合は公式運行情報を確認してください」
-- 「空港への直接影響はDBからは断定できませんが、愛知県沿岸部には波浪注意報があります」
-
-判定基準:
-- PASS: 公式情報DBで主要な主張を確認でき、過度な断定がない。
-- NEEDS_REVIEW: 公式情報DBはあるが、表現が強い、不確実性が残る、または一部だけ確認できる。
-- FAIL: 公式情報DBにない事故・災害・遅延・被害を断定している。
-- FAIL: 公式情報と矛盾する安全判断、危険な行動提案、過度な安心表現がある。
-- NEEDS_REVIEW: 情報不足なのに安全と断定している可能性がある。
-- FAIL: DBにない現在の所要時間、運行障害、天候、安全性、影響範囲を断定している。
-
-display_policy:
-- PASS -> SHOW
-- NEEDS_REVIEW -> SHOW_WITH_WARNING
-- FAIL -> DO_NOT_SHOW
-
-JSONだけを返してください。
-{{
-  "verdict": "PASS",
-  "display_policy": "SHOW",
-  "warning": "",
-  "reasons": ["確認理由"],
-  "checked_claims": ["確認した主張"]
-}}
-
-ユーザー質問:
-{question}
-
-draft_answer:
-{draft_answer}
-
-公式情報DB:
 {official_context_text(observations)}
 """

@@ -44,7 +44,7 @@ API
 - `GET /official/live`: DBに保存済みの情報を返します。
 - `GET /official/sources`: 取得対象の公的情報カタログを返します。
 - `GET /safety/simulated-events/scenarios`: 研究用の模擬シナリオ一覧を返します。
-- `POST /safety/simulated-events/load?scenario=multi_event&mode=replace`: 模擬イベントを保存します。
+- `POST /safety/simulated-events/load?scenario=ollama_random&mode=replace&count=20&dangerous_ratio=0.7`: ローカル Ollama で模擬イベントを生成し、保存します。
 - `DELETE /safety/simulated-events`: 模擬イベントだけを削除します。
 - `POST /ask`: 保存済み情報に基づく要約回答、参照情報、模擬データ有無を返します。
 - `GET /system/overview`: 現在の研究用パイプラインとDB状態を返します。
@@ -55,9 +55,10 @@ API
 模擬データは公的情報ではありません。すべての模擬イベントには以下を付与します。
 
 - `is_simulated: true`
-- `source: 研究用模擬イベントデータ`
+- `source: 研究用Ollama模擬イベントデータ`
 - `display_label` の「模擬データ」表示
-- 詳細文の「実際の公的発表ではありません」という注記
+
+模擬データはコード内の固定データではなく、ローカル Ollama に固定JSON形式で生成させます。標準設定では20件を生成し、低リスク・無危険を約3割、高リスク・支障ありを約7割にします。
 
 ## AI 設定
 

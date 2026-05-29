@@ -20,7 +20,6 @@ from config import (
     AI_MODEL,
     AI_NORMALIZER_MODEL,
     AI_PROVIDER,
-    AI_VERIFIER_MODEL,
     DB_FILE,
     OFFICIAL_BACKGROUND_INTERVAL_MINUTES,
     OFFICIAL_HISTORY_PER_SOURCE,
@@ -33,6 +32,7 @@ from db import (
     load_latest_official_signals_by_source,
     load_official_history_for_source,
     load_safety_events,
+    load_simulated_safety_events,
     save_area_official_signals,
 )
 from official_service import build_data_summary, live_official_summary, run_official_sync
@@ -95,7 +95,7 @@ def get_system_overview():
     cur = conn.cursor()
     cur.execute("SELECT COUNT(*) FROM official_area_observations")
     official_count = cur.fetchone()[0]
-    cur.execute("SELECT COUNT(*) FROM answer_verifications")
+    cur.execute("SELECT COUNT(*) FROM answer_logs")
     answer_count = cur.fetchone()[0]
     simulated_count = count_simulated_events(conn)
     conn.close()
@@ -116,7 +116,7 @@ def get_system_overview():
         "database": {
             "official_observation_count": official_count,
             "simulated_observation_count": simulated_count,
-            "answer_verification_count": answer_count,
+            "answer_log_count": answer_count,
         },
     }
 
@@ -125,8 +125,10 @@ def get_system_overview():
 def get_dashboard(include_simulated: bool = False):
     """フロント画面用に、最新都市安全情報・全体状態・AI設定を返す。"""
     conn = get_db()
-    observations = load_latest_official_signals_by_source(conn, limit_per_source=1, include_simulated=include_simulated)
+    official_observations = load_latest_official_signals_by_source(conn, limit_per_source=1, include_simulated=False)
+    simulated_observations = load_simulated_safety_events(conn, limit=20) if include_simulated else []
     conn.close()
+    observations = simulated_observations + official_observations
     summary = live_official_summary(observations)
     return {
         "basis": "公的情報を基本に表示しています。模擬データを含める場合は研究検証用として明示します。",
@@ -225,15 +227,23 @@ def get_simulated_event_scenarios():
 
 
 @app.post("/safety/simulated-events/load")
-def load_simulated_event_scenario(
-    scenario: str = Query(default="multi_event"),
+async def load_simulated_event_scenario(
+    scenario: str = Query(default="ollama_random"),
     mode: str = Query(default="replace", pattern="^(replace|append)$"),
+    count: int = Query(default=20, ge=1, le=50),
+    dangerous_ratio: float = Query(default=0.7, ge=0.0, le=1.0),
 ):
-    """指定した模擬シナリオを Evidence DB に保存する。"""
+    """ローカルOllamaで生成した模擬シナリオを都市安全情報DBに保存する。"""
     try:
-        events = build_simulated_events(scenario)
-    except ValueError as exc:
+        events, generation = await build_simulated_events(
+            scenario=scenario,
+            count=count,
+            dangerous_ratio=dangerous_ratio,
+        )
+    except (ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Ollamaによる模擬データ生成に失敗しました: {type(exc).__name__}: {exc}") from exc
     conn = get_db()
     deleted = delete_simulated_events(conn) if mode == "replace" else 0
     saved = save_area_official_signals(conn, events)
@@ -245,7 +255,8 @@ def load_simulated_event_scenario(
         "deleted_simulated_events": deleted,
         "saved_simulated_events": saved,
         "total_simulated_events": total_simulated,
-        "notice": "保存されたデータは研究検証用の模擬データです。実際の公的発表ではありません。",
+        "generation": generation,
+        "notice": "保存されたデータは研究検証用の模擬データです。",
     }
 
 
@@ -276,7 +287,7 @@ async def sync_live_official_observations(
 
 @app.post("/ask")
 async def ask_official_agent(request: AskRequest):
-    """ユーザー質問に対して、Generator と Verifier を順番に実行する。"""
+    """ユーザー質問に対して、保存済み都市安全情報DBに基づく要約回答を返す。"""
     question = request.question.strip()
     if not question:
         raise HTTPException(status_code=400, detail="question is required")
@@ -306,7 +317,7 @@ async def ask_official_agent(request: AskRequest):
 
 @app.delete("/answers/cache")
 def delete_answers_cache():
-    """保存済みの回答検証履歴を削除する。"""
+    """保存済みの問い合わせ回答ログを削除する。"""
     return {"deleted": delete_answer_cache()}
 
 
@@ -327,10 +338,10 @@ async def health_check():
     elif AI_PROVIDER == "api":
         ai_status = (
             "configured"
-            if AI_BASE_URL and AI_MODEL and AI_GENERATOR_MODEL and AI_VERIFIER_MODEL and AI_NORMALIZER_MODEL
+            if AI_BASE_URL and AI_MODEL and AI_GENERATOR_MODEL and AI_NORMALIZER_MODEL
             else "missing_config"
         )
-        models = sorted({active_ai_model(), AI_GENERATOR_MODEL, AI_VERIFIER_MODEL, AI_NORMALIZER_MODEL})
+        models = sorted({active_ai_model(), AI_GENERATOR_MODEL, AI_NORMALIZER_MODEL})
     return {
         "status": "ok" if db_ok and ai_status in {"connected", "configured"} else "degraded",
         "db": "found" if db_ok else "missing",

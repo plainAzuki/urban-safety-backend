@@ -1,8 +1,4 @@
-"""ユーザー質問への都市安全情報要約。
-
-Verifier Agent は本研究の主題から外し、保存済みの公的情報・模擬イベントを
-明示的な参照情報として返す方針にしている。
-"""
+"""保存済み都市安全情報に基づく自然言語問い合わせ回答。"""
 
 import json
 from datetime import datetime
@@ -10,68 +6,13 @@ from pathlib import Path
 from typing import Optional
 
 from ai_client import call_ai
-from config import AI_GENERATOR_MODEL, AI_PROVIDER, AI_VERIFIER_MODEL
-from db import get_db, load_area_official_signals, load_safety_events, save_answer_verification
-from json_utils import extract_json_object
+from config import AI_GENERATOR_MODEL, AI_PROVIDER
+from db import get_db, load_area_official_signals, load_safety_events, save_answer_log
 from official_service import run_official_sync
-from prompts import build_answer_prompt, build_verifier_prompt
+from prompts import build_answer_prompt
 
 
 LATEST_ASK_REPORT_FILE = Path(__file__).parent / "latest_ask_report.md"
-
-
-def clean_verification(data: dict) -> dict:
-    """Verifier のJSON出力をアプリ内部の固定形式へ正規化する。"""
-    verdict = str(data.get("verdict") or "NEEDS_REVIEW").strip()
-    if verdict not in {"PASS", "FAIL", "NEEDS_REVIEW"}:
-        verdict = "NEEDS_REVIEW"
-    expected_policy = {
-        "PASS": "SHOW",
-        "NEEDS_REVIEW": "SHOW_WITH_WARNING",
-        "FAIL": "DO_NOT_SHOW",
-    }[verdict]
-    display_policy = str(data.get("display_policy") or expected_policy).strip()
-    if display_policy not in {"SHOW", "SHOW_WITH_WARNING", "DO_NOT_SHOW"}:
-        display_policy = expected_policy
-    if verdict == "FAIL":
-        display_policy = "DO_NOT_SHOW"
-    reasons = data.get("reasons")
-    if not isinstance(reasons, list):
-        reasons = [str(reasons)] if reasons else []
-    checked_claims = data.get("checked_claims")
-    if not isinstance(checked_claims, list):
-        checked_claims = []
-    return {
-        "verdict": verdict,
-        "display_policy": display_policy,
-        "warning": str(data.get("warning") or "").strip(),
-        "reasons": [str(item)[:300] for item in reasons[:6]],
-        "checked_claims": [str(item)[:300] for item in checked_claims[:8]],
-    }
-
-
-async def verify_answer(
-    question: str,
-    draft_answer: str,
-    observations: list[dict],
-    verifier_prompt: str,
-) -> tuple[dict, Optional[str], str]:
-    """draft answer を公式情報と照合し、表示可否を決める。"""
-    try:
-        output, _ = await call_ai(
-            verifier_prompt,
-            json_mode=True,
-            model=AI_VERIFIER_MODEL,
-        )
-        return clean_verification(extract_json_object(output)), None, output
-    except Exception as exc:
-        return {
-            "verdict": "NEEDS_REVIEW",
-            "display_policy": "SHOW_WITH_WARNING",
-            "warning": "Verifier Agent の確認に失敗したため、注意付きで表示します。",
-            "reasons": [f"{type(exc).__name__}: {exc}"],
-            "checked_claims": [],
-        }, str(exc), ""
 
 
 def json_block(data) -> str:
@@ -86,24 +27,21 @@ def build_ask_report(
     db_observations: list[dict],
     prompt_observations: list[dict],
     generator_prompt: str,
-    draft_answer: str,
-    verifier_prompt: str,
-    verifier_raw_output: str,
-    verification: dict,
-    visible_answer: Optional[str],
+    answer: str,
+    references: list[dict],
+    includes_simulated: bool,
     generator_model: str,
     provider: str,
     ai_error: Optional[str],
 ) -> str:
-    """1回の質問に対する研究・デバッグ用レポートを作る。"""
-    shown = visible_answer is not None
+    """1回の問い合わせに対する研究・デバッグ用レポートを作る。"""
     return f"""# Ask Report
 
 generated_at: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 answer_id: {answer_id}
 provider: {provider}
 generator_model: {generator_model}
-research_policy: Evidence DB に基づく要約。Verifier Agent は研究主題から除外。
+research_policy: 保存済み都市安全情報DBに基づく要約回答
 
 ## Question
 
@@ -115,29 +53,20 @@ research_policy: Evidence DB に基づく要約。Verifier Agent は研究主題
 
 ## Result Summary
 
-- response_type: {verification.get("verdict")}
-- display_policy: {verification.get("display_policy")}
-- answer_shown_to_user: {shown}
+- response_type: EVIDENCE_SUMMARY
+- answer_shown_to_user: True
+- references_count: {len(references)}
+- includes_simulated: {includes_simulated}
 - ai_error: {ai_error or ""}
 
-## Visible Answer
+## Answer
 
-{visible_answer or "(no answer)"}
+{answer}
 
-## Draft Answer
-
-{draft_answer}
-
-## Verification Policy
+## References
 
 ```json
-{json_block(verification)}
-```
-
-## Verifier Agent
-
-```text
-研究方針により、このレポートでは Verifier Agent を使用していません。
+{json_block(references)}
 ```
 
 ## Evidence DB Used By Prompt
@@ -157,12 +86,6 @@ research_policy: Evidence DB に基づく要約。Verifier Agent は研究主題
 ```text
 {generator_prompt}
 ```
-
-## Verifier Prompt
-
-```text
-{verifier_prompt}
-```
 """
 
 
@@ -181,7 +104,7 @@ async def ask_official_question(
     area: Optional[str] = None,
     min_severity: Optional[float] = None,
 ) -> dict:
-    """Evidence DB に基づく要約回答を返す。Verifier Agent は使用しない。"""
+    """保存済み都市安全情報DBに基づく要約回答を返す。"""
     if refresh:
         await run_official_sync(force=True, limit=max(1, min(limit, 100)), source="ask-refresh")
     conn = get_db()
@@ -203,31 +126,22 @@ async def ask_official_question(
     ai_error = None
     generator_prompt = build_answer_prompt(question, observations, followup_context=followup_context)
     try:
-        draft_answer, model = await call_ai(generator_prompt, model=AI_GENERATOR_MODEL)
+        answer, model = await call_ai(generator_prompt, model=AI_GENERATOR_MODEL)
     except Exception as exc:
-        draft_answer = build_fallback_answer(question, observations)
+        answer = build_fallback_answer(question, observations)
         model = "answer-generation-fallback"
         ai_error = str(exc)
 
-    verifier_prompt = "Verifier Agent は本研究テーマから外しているため使用しません。"
-    verifier_raw_output = ""
-    verification = {
-        "verdict": "REFERENCE_SUMMARY",
-        "display_policy": "SHOW",
-        "warning": "この回答は保存済みの都市安全情報に基づく要約です。模擬データを含む場合は実際の公的発表ではありません。",
-        "reasons": ["研究方針により Verifier Agent は使用せず、参照情報と模擬データ有無を明示します。"],
-        "checked_claims": [],
-    }
-
-    visible_answer = draft_answer
-    answer_id = save_answer_verification(
-        question,
-        draft_answer,
-        visible_answer,
-        verification,
-        model,
-        AI_PROVIDER,
-        ai_error,
+    references = build_references(observations)
+    includes_simulated = any(item.get("is_simulated") for item in observations)
+    answer_id = save_answer_log(
+        question=question,
+        answer=answer,
+        references=references,
+        includes_simulated=includes_simulated,
+        model=model,
+        provider=AI_PROVIDER,
+        ai_error=ai_error,
     )
     report = build_ask_report(
         answer_id=answer_id,
@@ -236,26 +150,22 @@ async def ask_official_question(
         db_observations=db_observations,
         prompt_observations=observations,
         generator_prompt=generator_prompt,
-        draft_answer=draft_answer,
-        verifier_prompt=verifier_prompt,
-        verifier_raw_output=verifier_raw_output,
-        verification=verification,
-        visible_answer=visible_answer,
+        answer=answer,
+        references=references,
+        includes_simulated=includes_simulated,
         generator_model=model,
         provider=AI_PROVIDER,
         ai_error=ai_error,
     )
     save_latest_ask_report(report)
-    references = build_references(observations)
     return {
         "id": answer_id,
         "question": question,
-        "draft_answer": draft_answer,
-        "answer": visible_answer,
-        "verification": verification,
-        "generation_policy": "保存済み都市安全情報に基づく要約。Verifier Agent は使用しない。",
+        "draft_answer": answer,
+        "answer": answer,
+        "generation_policy": "保存済み都市安全情報DBに基づく要約回答",
         "references": references,
-        "includes_simulated": any(item.get("is_simulated") for item in observations),
+        "includes_simulated": includes_simulated,
         "simulated_reference_count": sum(1 for item in observations if item.get("is_simulated")),
         "model": model,
         "provider": AI_PROVIDER,
@@ -266,7 +176,7 @@ async def ask_official_question(
 
 
 def select_relevant_observations(question: str, observations: list[dict], limit: int = 20) -> list[dict]:
-    """質問語に近い情報を優先し、重要度の高い情報も残す。"""
+    """質問語に近い情報を優先し、リスクの高い情報も残す。"""
     keywords = [word for word in re_split_question(question) if len(word) >= 2]
 
     def score(item: dict) -> tuple[float, str]:
@@ -309,15 +219,15 @@ def build_references(observations: list[dict]) -> list[dict]:
 def build_fallback_answer(question: str, observations: list[dict]) -> str:
     """AIが使えない場合でも研究デモを継続できる決定的な要約を返す。"""
     if not observations:
-        return "保存済みの都市安全情報がないため、この質問に回答できません。公式情報を更新してから再確認してください。"
+        return "保存済みの都市安全情報がないため、この質問に回答できません。公的情報の更新、または模擬データの生成を行ってから再確認してください。"
     lines = [f"質問「{question}」に関連する保存済み情報の要約です。"]
     for item in observations[:5]:
         simulated = "模擬データ" if item.get("is_simulated") else "公的情報"
         updated = item.get("updated_at") or item.get("created_at") or item.get("observed_at")
         lines.append(
             f"{item.get('category', 'その他')}・{item.get('area')}: {item.get('display_label') or item.get('label')} "
-            f"（状態: {item.get('status')}、重要度: {item.get('severity')}、{simulated}、更新: {updated}）。"
+            f"（状態: {item.get('status')}、{simulated}、更新: {updated}）。"
         )
     if any(item.get("is_simulated") for item in observations):
-        lines.append("上記には研究検証用の模擬データが含まれます。実際の判断には公的機関の最新情報を確認してください。")
+        lines.append("上記には研究検証用の模擬データが含まれます。")
     return "\n".join(lines)

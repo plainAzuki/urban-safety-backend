@@ -10,7 +10,7 @@ from db import ensure_tables
 
 
 TABLES_TO_CLEAR = (
-    "answer_verifications",
+    "answer_logs",
     "official_area_observations",
 )
 

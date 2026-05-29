@@ -26,7 +26,7 @@ React Native / Expo フロントエンド
 - `db.py`: SQLite のテーブル定義、保存、検索、模擬データ削除。
 - `official_sources.py`: 公的情報源の定義と取得処理。
 - `official_service.py`: 公的情報の正規化、保存、概要生成。
-- `simulated_events.py`: 研究検証用の模擬シナリオ生成。
+- `simulated_events.py`: ローカル Ollama による研究検証用の模擬イベント生成。
 - `answer_service.py`: 保存済み都市安全情報に基づく要約回答。
 - `schemas.py`: API リクエストモデル。
 - `prompts.py`: LLM を使う場合の正規化・要約用プロンプト。
@@ -63,7 +63,7 @@ React Native / Expo フロントエンド
 
 ## 公的情報と模擬データの扱い
 
-公的情報は、気象庁、自治体防災情報、交通事業者、道路交通情報などから取得する。模擬データは研究検証のために作成したものであり、公的情報ではない。模擬データは `source` に「研究用模擬イベントデータ」、`is_simulated` に `true`、詳細文に「研究検証用であり、実際の公的発表ではありません」という注記を含める。
+公的情報は、気象庁、自治体防災情報、交通事業者、道路交通情報などから取得する。模擬データは研究検証のためにローカル Ollama が固定JSON形式で生成する。標準設定では20件を生成し、低リスク・無危険を約3割、高リスク・支障ありを約7割にする。模擬データは `source` に「研究用Ollama模擬イベントデータ」、`is_simulated` に `true` を設定する。
 
 ## API概要
 
@@ -74,7 +74,7 @@ React Native / Expo フロントエンド
 | `GET /safety/events` | 統一データモデルの都市安全情報一覧を取得 |
 | `POST /official/sync` | 公的情報源から情報を取得・保存 |
 | `GET /safety/simulated-events/scenarios` | 利用可能な模擬シナリオ一覧を取得 |
-| `POST /safety/simulated-events/load?scenario=multi_event&mode=replace` | 模擬イベントをDBへ投入 |
+| `POST /safety/simulated-events/load?scenario=ollama_random&mode=replace&count=20&dangerous_ratio=0.7` | Ollama生成の模擬イベントをDBへ投入 |
 | `DELETE /safety/simulated-events` | 模擬イベントのみ削除 |
 | `POST /ask` | 保存済み情報に基づく要約回答と参照情報を取得 |
 
@@ -83,7 +83,7 @@ React Native / Expo フロントエンド
 ```bash
 curl "http://localhost:8000/dashboard?include_simulated=true"
 curl "http://localhost:8000/safety/events?include_simulated=true&category=鉄道"
-curl -X POST "http://localhost:8000/safety/simulated-events/load?scenario=multi_event&mode=replace"
+curl -X POST "http://localhost:8000/safety/simulated-events/load?scenario=ollama_random&mode=replace&count=20&dangerous_ratio=0.7"
 curl -X DELETE "http://localhost:8000/safety/simulated-events"
 curl -X POST "http://localhost:8000/ask" \
   -H "Content-Type: application/json" \
