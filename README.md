@@ -72,17 +72,4 @@ AI_NORMALIZER_MODEL=qwen3.6:35b-a3b
 AI_BASE_URL=http://localhost:11434/api/generate
 ```
 
-## 卒業研究用ドキュメント
 
-- `docs/research_goal_ja.md`
-- `docs/system_design_ja.md`
-- `docs/experiment_plan_ja.md`
-- `docs/thesis_outline_ja.md`
-- `docs/references_ja.md`
-- `docs/api_examples_ja.md`
-
-## 実験成果物
-
-- `experiments/sample_results_ja.md`
-- `experiments/sample_results.json`
-- `experiments/evaluation_table.csv`
