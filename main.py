@@ -23,6 +23,8 @@ from config import (
     DB_FILE,
     OFFICIAL_BACKGROUND_INTERVAL_MINUTES,
     OFFICIAL_HISTORY_PER_SOURCE,
+    SIMULATED_DANGEROUS_RATIO,
+    SIMULATED_EVENT_COUNT,
 )
 from db import (
     count_simulated_events,
@@ -113,6 +115,11 @@ def get_system_overview():
         ],
         "ai": current_ai_config(),
         "official_statuses": official_status_catalog(),
+        "simulation_defaults": {
+            "event_count": SIMULATED_EVENT_COUNT,
+            "dangerous_ratio": SIMULATED_DANGEROUS_RATIO,
+            "safe_ratio": round(1.0 - SIMULATED_DANGEROUS_RATIO, 2),
+        },
         "database": {
             "official_observation_count": official_count,
             "simulated_observation_count": simulated_count,
@@ -230,8 +237,8 @@ def get_simulated_event_scenarios():
 async def load_simulated_event_scenario(
     scenario: str = Query(default="ollama_random"),
     mode: str = Query(default="replace", pattern="^(replace|append)$"),
-    count: int = Query(default=20, ge=1, le=50),
-    dangerous_ratio: float = Query(default=0.7, ge=0.0, le=1.0),
+    count: int = Query(default=SIMULATED_EVENT_COUNT, ge=1, le=50),
+    dangerous_ratio: float = Query(default=SIMULATED_DANGEROUS_RATIO, ge=0.0, le=1.0),
 ):
     """ローカルOllamaで生成した模擬シナリオを都市安全情報DBに保存する。"""
     try:

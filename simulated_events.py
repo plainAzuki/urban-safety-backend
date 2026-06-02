@@ -9,14 +9,14 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from ai_client import call_ollama
-from config import AI_MODEL
+from config import AI_MODEL, SIMULATED_DANGEROUS_RATIO, SIMULATED_EVENT_COUNT
 from json_utils import extract_json_object
 
 
 SIMULATED_SOURCE = "研究用Ollama模擬イベントデータ"
 SIMULATED_SOURCE_URL = "simulation://urban-safety-research/ollama"
-DEFAULT_EVENT_COUNT = 20
-DEFAULT_DANGEROUS_RATIO = 0.7
+DEFAULT_EVENT_COUNT = SIMULATED_EVENT_COUNT
+DEFAULT_DANGEROUS_RATIO = SIMULATED_DANGEROUS_RATIO
 
 VALID_CATEGORIES = {"鉄道", "道路", "気象", "防災", "空港", "ライフライン", "その他"}
 VALID_STATUSES = {"通常", "情報", "注意", "警戒", "危険", "運休", "支障"}
@@ -27,7 +27,7 @@ DANGEROUS_STATUSES = {"注意", "警戒", "危険", "運休", "支障"}
 SCENARIOS = {
     "ollama_random": {
         "name": "Ollamaランダム生成",
-        "description": "ローカル Ollama が20件の都市安全模擬イベントをJSON形式で生成する。",
+        "description": "ローカル Ollama が研究評価用の都市安全模擬イベントをJSON形式で生成する。",
     },
     "natural_disaster": {
         "name": "自然災害中心",
@@ -66,6 +66,8 @@ def build_generation_prompt(
     """Ollama に渡す固定JSON形式の生成プロンプト。"""
     dangerous_count = round(count * dangerous_ratio)
     safe_count = count - dangerous_count
+    safe_percent = round((safe_count / count) * 100) if count else 0
+    dangerous_percent = round((dangerous_count / count) * 100) if count else 0
     scenario_info = SCENARIOS.get(scenario, SCENARIOS["ollama_random"])
     return f"""あなたは卒業研究用の都市安全情報シミュレータです。
 愛知県および周辺地域を対象に、研究検証用の模擬イベントデータを生成してください。
@@ -74,7 +76,7 @@ def build_generation_prompt(
 - 実際の公的情報ではなく、すべて研究用の模擬データです。
 - 必ずJSON objectのみを返してください。Markdownや説明文は禁止です。
 - events は必ず {count} 件にしてください。
-- 低リスク・無危険データを約3割、危険・支障ありデータを約7割にしてください。
+- 低リスク・無危険データを約{safe_percent}%、危険・支障ありデータを約{dangerous_percent}%にしてください。
 - 今回は低リスク {safe_count} 件、高リスク {dangerous_count} 件を目安にしてください。
 - 自然災害、鉄道停運、道路通行止め、気象警報、避難情報、空港アクセス注意、停電・断水などを含めてください。
 - 同じ地域・同じタイトルだけに偏らず、名古屋市、豊橋市、岡崎市、常滑市、知多半島、三河地方、愛知県西部などを混ぜてください。
@@ -180,7 +182,7 @@ def clean_generated_events(raw_events: list[dict], scenario: str, count: int) ->
 
 
 def enforce_risk_ratio(events: list[dict], safe_count: int, dangerous_count: int) -> list[dict]:
-    """3:7 に近い低リスク・高リスク比率へ補正する。"""
+    """指定された低リスク・高リスク比率へ補正する。"""
     safe_indexes = [index for index, item in enumerate(events) if item["status"] in SAFE_STATUSES]
     dangerous_indexes = [index for index, item in enumerate(events) if item["status"] in DANGEROUS_STATUSES]
 

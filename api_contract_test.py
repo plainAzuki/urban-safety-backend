@@ -2,6 +2,7 @@
 
 from fastapi.testclient import TestClient
 
+from config import SIMULATED_DANGEROUS_RATIO, SIMULATED_EVENT_COUNT
 from main import app
 
 
@@ -21,6 +22,9 @@ def main():
         assert resp.status_code == 200, f"{path}: {resp.status_code}"
         data = resp.json()
         assert key in data, f"{path}: missing {key}"
+        if path == "/system/overview":
+            assert data["simulation_defaults"]["event_count"] == SIMULATED_EVENT_COUNT
+            assert data["simulation_defaults"]["dangerous_ratio"] == SIMULATED_DANGEROUS_RATIO
         print(f"{path} ok")
 
 

@@ -32,5 +32,9 @@ OFFICIAL_LLM_RAW_CHARS = int(env_value("OFFICIAL_LLM_RAW_CHARS", "1200"))
 OFFICIAL_BACKGROUND_INTERVAL_MINUTES = int(env_value("OFFICIAL_BACKGROUND_INTERVAL_MINUTES", "1"))
 OFFICIAL_HISTORY_PER_SOURCE = int(env_value("OFFICIAL_HISTORY_PER_SOURCE", "5"))
 
+# 研究評価で用いる模擬データの標準条件。
+SIMULATED_EVENT_COUNT = int(env_value("SIMULATED_EVENT_COUNT", "10"))
+SIMULATED_DANGEROUS_RATIO = float(env_value("SIMULATED_DANGEROUS_RATIO", "0.3"))
+
 # SQLite DB はバックエンドディレクトリ直下に固定する。
 DB_FILE = Path(env_value("DB_FILE", str(Path(__file__).parent / "urban_safety.db")))

@@ -243,13 +243,18 @@ def load_safety_events(
     conn,
     limit: int = 50,
     include_simulated: bool = False,
+    simulated_only: bool = False,
     category: Optional[str] = None,
     area: Optional[str] = None,
     min_severity: Optional[float] = None,
 ) -> list[dict]:
     """研究用APIで使う統一都市安全情報一覧を取得する。"""
-    conditions = ["(? = 1 OR is_simulated = 0)"]
-    params: list[object] = [int(include_simulated)]
+    if simulated_only:
+        conditions = ["is_simulated = 1"]
+        params: list[object] = []
+    else:
+        conditions = ["(? = 1 OR is_simulated = 0)"]
+        params = [int(include_simulated)]
     if category:
         conditions.append("category = ?")
         params.append(category)

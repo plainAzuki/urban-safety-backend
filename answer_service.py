@@ -7,7 +7,7 @@ from typing import Optional
 
 from ai_client import call_ai
 from config import AI_GENERATOR_MODEL, AI_PROVIDER
-from db import get_db, load_area_official_signals, load_safety_events, save_answer_log
+from db import get_db, load_safety_events, save_answer_log
 from official_service import run_official_sync
 from prompts import build_answer_prompt
 
@@ -114,13 +114,19 @@ async def ask_official_question(
             conn,
             limit=max(20, min(limit, 100)),
             include_simulated=include_simulated,
+            simulated_only=include_simulated,
             category=category or None,
             area=area or None,
             min_severity=min_severity,
         ),
         limit=limit,
     )
-    db_observations = load_area_official_signals(conn, limit=1000, include_simulated=include_simulated)
+    db_observations = load_safety_events(
+        conn,
+        limit=1000,
+        include_simulated=include_simulated,
+        simulated_only=include_simulated,
+    )
     conn.close()
 
     ai_error = None
