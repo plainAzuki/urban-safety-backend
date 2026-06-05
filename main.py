@@ -21,6 +21,7 @@ from config import (
     AI_NORMALIZER_MODEL,
     AI_PROVIDER,
     DB_FILE,
+    OFFICIAL_BACKGROUND_SYNC_ENABLED,
     OFFICIAL_BACKGROUND_INTERVAL_MINUTES,
     OFFICIAL_HISTORY_PER_SOURCE,
     SIMULATED_DANGEROUS_RATIO,
@@ -71,6 +72,8 @@ async def official_background_loop() -> None:
 async def start_official_background_sync() -> None:
     """FastAPI 起動時に公式情報の定期確認を開始する。"""
     global official_background_task
+    if not OFFICIAL_BACKGROUND_SYNC_ENABLED:
+        return
     if official_background_task is None or official_background_task.done():
         official_background_task = asyncio.create_task(official_background_loop())
 
@@ -92,7 +95,7 @@ def root():
 
 @app.get("/system/overview")
 def get_system_overview():
-    """卒論説明にも使える、システム全体像とDB状態の概要。"""
+    """卒論説明にも使える、システム全体像と保存済みデータ状態の概要。"""
     conn = get_db()
     cur = conn.cursor()
     cur.execute("SELECT COUNT(*) FROM official_area_observations")
@@ -108,7 +111,7 @@ def get_system_overview():
             "official/sync で取得",
             "LLMまたはルールで構造化",
             "研究用模擬イベントを必要に応じて追加",
-            "都市安全情報DBへ保存",
+            "保存済みデータとしてローカルに記録",
             "モバイルUIで通常時・異常時を可視化",
             "ユーザー質問に対して保存済み情報から要約回答を生成",
             "参照情報・更新時刻・模擬データ有無を表示",
@@ -119,6 +122,10 @@ def get_system_overview():
             "event_count": SIMULATED_EVENT_COUNT,
             "dangerous_ratio": SIMULATED_DANGEROUS_RATIO,
             "safe_ratio": round(1.0 - SIMULATED_DANGEROUS_RATIO, 2),
+        },
+        "official_background_sync": {
+            "enabled": OFFICIAL_BACKGROUND_SYNC_ENABLED,
+            "interval_minutes": OFFICIAL_BACKGROUND_INTERVAL_MINUTES,
         },
         "database": {
             "official_observation_count": official_count,
@@ -155,7 +162,7 @@ async def sync_official_observations(
     force: bool = Query(default=False),
     limit: int = Query(default=20, ge=1, le=100),
 ):
-    """公式情報源へアクセスし、Evidence DB を更新する。"""
+    """公式情報源へアクセスし、保存済みデータを更新する。"""
     return await locked_official_sync(force=force, limit=limit, source="manual")
 
 
@@ -171,7 +178,7 @@ def get_live_official_observations(
     source: Optional[str] = Query(default=None),
     include_simulated: bool = Query(default=False),
 ):
-    """Evidence DB に保存済みの都市安全情報を返す。"""
+    """保存済みの都市安全情報を返す。"""
     conn = get_db()
     if source:
         observations = load_official_history_for_source(conn, source, limit=limit)
@@ -240,7 +247,7 @@ async def load_simulated_event_scenario(
     count: int = Query(default=SIMULATED_EVENT_COUNT, ge=1, le=50),
     dangerous_ratio: float = Query(default=SIMULATED_DANGEROUS_RATIO, ge=0.0, le=1.0),
 ):
-    """ローカルOllamaで生成した模擬シナリオを都市安全情報DBに保存する。"""
+    """ローカルOllamaで生成した模擬シナリオを保存済みデータに追加する。"""
     try:
         events, generation = await build_simulated_events(
             scenario=scenario,
@@ -269,7 +276,7 @@ async def load_simulated_event_scenario(
 
 @app.delete("/safety/simulated-events")
 def clear_simulated_event_scenario():
-    """Evidence DB から模擬イベントだけを削除する。"""
+    """保存済みデータから模擬イベントだけを削除する。"""
     conn = get_db()
     deleted = delete_simulated_events(conn)
     conn.close()
@@ -294,7 +301,7 @@ async def sync_live_official_observations(
 
 @app.post("/ask")
 async def ask_official_agent(request: AskRequest):
-    """ユーザー質問に対して、保存済み都市安全情報DBに基づく要約回答を返す。"""
+    """ユーザー質問に対して、保存済みデータに基づく要約回答を返す。"""
     question = request.question.strip()
     if not question:
         raise HTTPException(status_code=400, detail="question is required")

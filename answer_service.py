@@ -41,7 +41,7 @@ generated_at: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 answer_id: {answer_id}
 provider: {provider}
 generator_model: {generator_model}
-research_policy: 保存済み都市安全情報DBに基づく要約回答
+research_policy: 保存済みデータに基づく要約回答
 
 ## Question
 
@@ -69,13 +69,13 @@ research_policy: 保存済み都市安全情報DBに基づく要約回答
 {json_block(references)}
 ```
 
-## Evidence DB Used By Prompt
+## Saved Data Used By Prompt
 
 ```json
 {json_block(prompt_observations)}
 ```
 
-## Full Evidence DB Snapshot
+## Full Saved Data Snapshot
 
 ```json
 {json_block(db_observations)}
@@ -104,7 +104,7 @@ async def ask_official_question(
     area: Optional[str] = None,
     min_severity: Optional[float] = None,
 ) -> dict:
-    """保存済み都市安全情報DBに基づく要約回答を返す。"""
+    """保存済み都市安全情報に基づく要約回答を返す。"""
     if refresh:
         await run_official_sync(force=True, limit=max(1, min(limit, 100)), source="ask-refresh")
     conn = get_db()
@@ -114,7 +114,7 @@ async def ask_official_question(
             conn,
             limit=max(20, min(limit, 100)),
             include_simulated=include_simulated,
-            simulated_only=include_simulated,
+            simulated_only=False,
             category=category or None,
             area=area or None,
             min_severity=min_severity,
@@ -125,7 +125,7 @@ async def ask_official_question(
         conn,
         limit=1000,
         include_simulated=include_simulated,
-        simulated_only=include_simulated,
+        simulated_only=False,
     )
     conn.close()
 
@@ -169,7 +169,7 @@ async def ask_official_question(
         "question": question,
         "draft_answer": answer,
         "answer": answer,
-        "generation_policy": "保存済み都市安全情報DBに基づく要約回答",
+        "generation_policy": "保存済みデータに基づく要約回答",
         "references": references,
         "includes_simulated": includes_simulated,
         "simulated_reference_count": sum(1 for item in observations if item.get("is_simulated")),
@@ -225,8 +225,8 @@ def build_references(observations: list[dict]) -> list[dict]:
 def build_fallback_answer(question: str, observations: list[dict]) -> str:
     """AIが使えない場合でも研究デモを継続できる決定的な要約を返す。"""
     if not observations:
-        return "保存済みの都市安全情報がないため、この質問に回答できません。公的情報の更新、または模擬データの生成を行ってから再確認してください。"
-    lines = [f"質問「{question}」に関連する保存済み情報の要約です。"]
+        return "保存済みデータには、この質問に直接関係する参照情報が見つかりません。公的情報を更新するか、研究検証用の模擬データを含めてから再確認してください。"
+    lines = [f"質問「{question}」について、保存済みデータ内の参照情報から確認できる範囲でまとめます。"]
     for item in observations[:5]:
         simulated = "模擬データ" if item.get("is_simulated") else "公的情報"
         updated = item.get("updated_at") or item.get("created_at") or item.get("observed_at")
@@ -234,6 +234,11 @@ def build_fallback_answer(question: str, observations: list[dict]) -> str:
             f"{item.get('category', 'その他')}・{item.get('area')}: {item.get('display_label') or item.get('label')} "
             f"（状態: {item.get('status')}、{simulated}、更新: {updated}）。"
         )
-    if any(item.get("is_simulated") for item in observations):
-        lines.append("上記には研究検証用の模擬データが含まれます。")
+    sources = sorted({str(item.get("source")) for item in observations[:5] if item.get("source")})
+    latest = max(
+        (str(item.get("updated_at") or item.get("created_at") or item.get("observed_at")) for item in observations if item.get("updated_at") or item.get("created_at") or item.get("observed_at")),
+        default="不明",
+    )
+    simulated_note = "研究検証用の模擬データも含まれます" if any(item.get("is_simulated") for item in observations) else "模擬データは含まれていません"
+    lines.append(f"参照した情報源は{', '.join(sources) or '不明'}で、最新の更新は{latest}、{simulated_note}。")
     return "\n".join(lines)

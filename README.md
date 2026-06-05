@@ -25,7 +25,7 @@ official/sync で取得
   ↓
 LLM またはルールで統一データモデルへ構造化
   ↓
-都市安全情報DB
+保存済みデータ
   ↑
 研究用模擬イベントデータ
   ↓
@@ -40,15 +40,15 @@ API
 
 - `GET /dashboard?include_simulated=false`: 画面用の概要と最新情報を返します。
 - `GET /safety/events`: 統一データモデルの都市安全情報一覧を返します。
-- `POST /official/sync?force=true&limit=1`: 公的情報源へアクセスし、DBへ保存します。
-- `GET /official/live`: DBに保存済みの情報を返します。
+- `POST /official/sync?force=true&limit=1`: 公的情報源へアクセスし、ローカルに保存します。
+- `GET /official/live`: 保存済みの情報を返します。
 - `GET /official/sources`: 取得対象の公的情報カタログを返します。
 - `GET /safety/simulated-events/scenarios`: 研究用の模擬シナリオ一覧を返します。
 - `POST /safety/simulated-events/load?scenario=ollama_random&mode=replace&count=10&dangerous_ratio=0.3`: ローカル Ollama で模擬イベントを生成し、保存します。
 - `DELETE /safety/simulated-events`: 模擬イベントだけを削除します。
 - `POST /ask`: 保存済み情報に基づく要約回答、参照情報、模擬データ有無を返します。
-- `GET /system/overview`: 現在の研究用パイプラインとDB状態を返します。
-- `GET /health`: DBとAI接続状態を確認します。
+- `GET /system/overview`: 現在の研究用パイプラインと保存済みデータ状態を返します。
+- `GET /health`: 保存済みデータとAI接続状態を確認します。
 
 ## 模擬データの扱い
 
@@ -71,4 +71,3 @@ AI_GENERATOR_MODEL=qwen3.6:35b-a3b
 AI_NORMALIZER_MODEL=qwen3.6:35b-a3b
 AI_BASE_URL=http://localhost:11434/api/generate
 ```
-

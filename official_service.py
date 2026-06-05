@@ -8,6 +8,7 @@ from ai_client import call_ai
 from config import (
     AI_TIMEOUT_SECONDS,
     AI_NORMALIZER_MODEL,
+    OFFICIAL_BACKGROUND_SYNC_ENABLED,
     OFFICIAL_BACKGROUND_INTERVAL_MINUTES,
     OFFICIAL_FETCH_MIN_INTERVAL_MINUTES,
     OFFICIAL_HISTORY_PER_SOURCE,
@@ -245,6 +246,7 @@ async def run_official_sync(force: bool = False, limit: int = 20, source: str = 
         "used_cache": not fetched,
         "last_synced_at": last_synced_at,
         "min_interval_minutes": OFFICIAL_FETCH_MIN_INTERVAL_MINUTES,
+        "background_sync_enabled": OFFICIAL_BACKGROUND_SYNC_ENABLED,
         "background_interval_minutes": OFFICIAL_BACKGROUND_INTERVAL_MINUTES,
         "history_per_source": OFFICIAL_HISTORY_PER_SOURCE,
         "llm_batch_size": OFFICIAL_LLM_BATCH_SIZE,
